@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&display=swap");
+
+* {
+   margin: 0;
+   padding: 0;
+   font-family: "Open Sans";
+   color: #414141;
+}
+
+body {
+   background-color: #fbfbfb;
+}
+
+div {
+   box-sizing: border-box;
+}
+
+h1 {
+   font-size: 32px;
+   font-weight: 800;
+}
+
+h2,
+a,
+button {
+   font-size: 20px;
+   font-weight: bold;
+}
+
+h3 {
+   font-size: 16px;
+   font-weight: lighter;
+}
+
+a {
+   text-decoration: none;
+}
+
+p,
+span {
+   font-size: 16px;
+   font-weight: normal;
+}
+
+input {
+   font-size: 16px;
+   font-weight: normal;
+   box-sizing: border-box;
+   padding: 20px;
+}
+
+::placeholder {
+   font-size: 16px;
+   font-weight: lighter;
+   color: #b5b5b5;
+   padding: 0px;
+}
+
+button {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 20px;
+   cursor: pointer;
+}
+
+button,
+input {
+   border-radius: 10px;
+   border: none;
+}
+
+.line {
+   width: 2px;
+   height: 25px;
+   background-color: #f4e6e6;
+}
+
+.shadow,
+input,
+button {
+   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.red-font {
+   color: #e31c24;
+}
+
+.red-background,
+button {
+   background-color: #e31c24;
+   color: #fbfbfb;
+
+   * {
+      color: #fbfbfb;
+   }
+}
+
+.secondary-background {
+   background-color: #484b5b;
+}
+
+.bar-background {
+   background-color: #f2f2f2;
+}
