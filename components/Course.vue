@@ -1,34 +1,34 @@
 <template>
-   <div class="course-box shadow">
-      <img src="/oea-logo.png" width="100" />
+   <NuxtLink to="/courses/1">
+      <div class="course-box shadow bordered">
+         <img src="/oea-logo.png" width="100" />
 
-      <div>
-         <h2>Certificado OEA</h2>
-         <p>
-            Nullam aliquam tincidunt ante, id dignissim sem varius eget. Etiam
-            vitae arcu leo. Aliquam volutpat sem non mi condimentum...
-         </p>
-      </div>
+         <div>
+            <h2>Certificado OEA</h2>
+            <p class="lighter">
+               Nullam aliquam tincidunt ante, id dignissim sem varius eget.
+               Etiam vitae arcu leo. Aliquam volutpat sem non mi condimentum...
+            </p>
+         </div>
 
-      <div class="progress-text">
-         <span>Progresso:</span>
-         <span style="font-weight: lighter">8/9</span>
-      </div>
+         <div class="progress-text">
+            <span>Progresso:</span>
+            <span class="lighter">8/9</span>
+         </div>
 
-      <div class="progress-bar bar-background">
-         <div class="red-background" />
+         <ProgressBar />
       </div>
-   </div>
+   </NuxtLink>
 </template>
 
-<style>
+<style scoped>
 .course-box {
    max-width: 300px;
-   border-radius: 10px;
    padding: 25px;
    display: flex;
    flex-direction: column;
    gap: 20px;
+   background-color: white;
 
    p {
       font-weight: lighter;

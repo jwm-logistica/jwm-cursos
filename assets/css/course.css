@@ -1,0 +1,43 @@
+#view-body-course {
+   display: flex;
+   gap: 55px;
+}
+
+.side-bar {
+   width: fit-content;
+   display: flex;
+   flex-direction: column;
+   gap: 25px;
+}
+
+.back-and-progress {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.course-chapter-title {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+.chapter-view {
+   display: flex;
+   flex-direction: column;
+   gap: 40px;
+   padding: 0px 30px 0px 30px;
+}
+
+.chapter-video-box,
+.chapter-text {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+}
+
+.chapter-video {
+   background-color: #c4c4c4;
+   width: 100%;
+   aspect-ratio: 16/9;
+}

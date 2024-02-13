@@ -7,12 +7,15 @@
    color: #414141;
 }
 
-body {
+body,
+.border-circle {
    background-color: #fbfbfb;
 }
 
 div {
    box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   -webkit-box-sizing: border-box;
 }
 
 h1 {
@@ -21,7 +24,6 @@ h1 {
 }
 
 h2,
-a,
 button {
    font-size: 20px;
    font-weight: bold;
@@ -46,7 +48,7 @@ input {
    font-size: 16px;
    font-weight: normal;
    box-sizing: border-box;
-   padding: 20px;
+   padding: 17px;
 }
 
 ::placeholder {
@@ -60,7 +62,7 @@ button {
    display: flex;
    justify-content: center;
    align-items: center;
-   padding: 20px;
+   padding: 17px;
    cursor: pointer;
 }
 
@@ -80,6 +82,10 @@ input {
 input,
 button {
    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bordered {
+   border-radius: 10px;
 }
 
 .red-font {
@@ -102,4 +108,12 @@ button {
 
 .bar-background {
    background-color: #f2f2f2;
+}
+
+.lighter {
+   font-weight: 200;
+}
+
+.spaced-body {
+   padding: 35px 55px;
 }

@@ -13,7 +13,7 @@
    </div>
 </template>
 
-<style>
+<style scoped>
 .header-box {
    width: 100%;
    display: flex;

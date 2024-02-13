@@ -1,79 +1,37 @@
+<script setup>
+const weekDays = [
+   { name: "Dom", value: 5 },
+   { name: "Seg", value: 5 },
+   { name: "Ter", value: 5 },
+   { name: "Qua", value: 5 },
+   { name: "Qui", value: 5 },
+   { name: "Sex", value: 5 },
+   { name: "Sab", value: 5 },
+];
+</script>
+
 <template>
-   <div class="daily-conclusions-box shadow">
+   <div class="daily-conclusions-box shadow bordered">
       <h2>Conclusões Diárias</h2>
 
       <div class="daily-bars">
-         <div class="daily-bar">
+         <div class="daily-bar" v-for="day in weekDays">
             <div class="bar-background bar-outer">
                <div class="red-background bar-inner">
-                  <span>5</span>
+                  <span>{{ day.value }}</span>
                </div>
             </div>
-            <span>Seg</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Ter</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Qua</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Qui</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Sex</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Sab</span>
-         </div>
-
-         <div class="daily-bar">
-            <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
-                  <span>5</span>
-               </div>
-            </div>
-            <span>Dom</span>
+            <span>{{ day.name }}</span>
          </div>
       </div>
    </div>
 </template>
 
-<style>
+<style scoped>
 .daily-conclusions-box {
-   width: fit-content;
+   width: 100%;
    padding: 25px;
-   border-radius: 10px;
+   background-color: #ffffff;
 
    h2 {
       margin-bottom: 20px;
@@ -82,7 +40,7 @@
 
 .daily-bars {
    display: flex;
-   gap: 18px;
+   justify-content: space-between;
 }
 
 .daily-bar {
