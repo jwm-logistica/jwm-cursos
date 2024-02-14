@@ -1,29 +1,65 @@
 <script setup>
 const { chapter } = defineProps(["chapter"]);
 
+const chapterLessons = chapter.lessons.map(lesson => {
+   return { ...lesson, show: false };
+});
+const chapterLessonsRef = ref(chapterLessons);
+
 const isChecked = ref(false);
+
+let timeoutID = null;
+const onChapterCheck = show => {
+   const timeInMS = 200;
+   clearTimeout(timeoutID);
+
+   if (show) {
+      for (let i = 0; i < chapterLessons.length; i++) {
+         const delay = timeInMS * i;
+         timeoutID = setTimeout(() => {
+            chapterLessonsRef.value[i].show = show;
+         }, delay);
+      }
+   } else {
+      for (let i = chapterLessons.length - 1; i >= 0; i--) {
+         const delay = timeInMS * (chapterLessons.length - 1 - i);
+         console.log(delay);
+         timeoutID = setTimeout(() => {
+            chapterLessonsRef.value[i].show = show;
+         }, delay);
+      }
+   }
+};
+
+const emit = defineEmits(["lessonSelection"]);
+const onLessonSelection = value => {
+   emit("lessonSelection", value);
+};
 </script>
 
 <template>
    <div class="chapter-dropdown">
-      <label @change="isChecked = !isChecked">
+      <label
+         @change="
+            () => {
+               isChecked = !isChecked;
+               onChapterCheck(isChecked);
+            }
+         "
+      >
          <input type="checkbox" />
          <div class="chapter-box bordered shadow">
             <span>{{ chapter.title }}</span>
          </div>
       </label>
 
-      <transition name="fade">
-         <div class="lessons" v-if="isChecked">
-            <div class="lesson" v-for="lesson in chapter.lessons">
-               <CircleWBaseLine />
-               <label>
-                  <input type="checkbox" />
-                  <span>{{ lesson.name }}</span>
-               </label>
-            </div>
-         </div>
-      </transition>
+      <div class="lessons">
+         <Lesson
+            v-for="lesson in chapterLessonsRef"
+            :lesson="lesson"
+            @toggle="value => onLessonSelection(value)"
+         />
+      </div>
    </div>
 </template>
 
@@ -57,24 +93,5 @@ label {
 
 .lessons {
    width: 100%;
-}
-
-.lesson {
-   width: 100%;
-   padding: 0px 30px 0px 30px;
-   display: flex;
-   align-items: flex-end;
-   gap: 10px;
-
-   label {
-      display: flex;
-      align-items: flex-end;
-      margin: 0;
-      cursor: pointer;
-
-      span {
-         line-height: 17px;
-      }
-   }
 }
 </style>

@@ -4,16 +4,26 @@ const chapters = [
    {
       title: "Capítulo 1 - Processos e Procedimentos",
       lessons: [
-         { done: true, name: "Vídeo Aula 1", isVideo: true },
-         { done: false, name: "Vídeo Aula 2", isVideo: true },
-         { done: false, name: "Teste do capítulo", isVideo: false },
+         { done: true, name: "Vídeo Aula 1", isVideo: true, show: false },
+         { done: false, name: "Vídeo Aula 2", isVideo: true, show: false },
+         {
+            done: false,
+            name: "Teste do capítulo",
+            isVideo: false,
+            show: false,
+         },
       ],
    },
    {
       title: "Capítulo 2 - Processos e Procedimentos",
       lessons: [
-         { done: true, name: "Vídeo Aula 1", isVideo: true },
-         { done: false, name: "Teste do capítulo", isVideo: false },
+         { done: true, name: "Vídeo Aula 1", isVideo: true, show: false },
+         {
+            done: false,
+            name: "Teste do capítulo",
+            isVideo: false,
+            show: false,
+         },
       ],
    },
    {
@@ -21,6 +31,12 @@ const chapters = [
       lessons: [],
    },
 ];
+
+const lessonSelected = ref({
+   selected: "",
+   isVideo: true,
+   data: { title: "", text: "", videoUrl: "" },
+});
 </script>
 
 <template>
@@ -34,9 +50,11 @@ const chapters = [
                <ProgressBar />
                <span class="lighter">8/9</span>
             </div>
-            <div v-for="chapter in chapters">
-               <CourseChapter :chapter="chapter" />
-            </div>
+            <CourseChapter
+               :chapter="chapter"
+               v-for="chapter in chapters"
+               @lessonSelection="value => (lessonSelected = value)"
+            />
          </div>
 
          <div class="chapter-view">
@@ -87,10 +105,13 @@ const chapters = [
                   dolor a elit lobortis, ut pretium urna vulputate.
                </p>
             </div>
-            <div class="chapter-video-box">
+
+            <div class="chapter-video-box" v-if="lessonSelected.isVideo">
                <h2>Vídeo aula []:</h2>
                <div class="chapter-video bordered shadow" />
             </div>
+
+            <ChapterTest v-if="!lessonSelected.isVideo" />
          </div>
       </div>
    </div>
