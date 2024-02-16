@@ -42,7 +42,7 @@ const onChange = () => {
       </div>
       <button
          type="submit"
-         class="submitButton"
+         class="submitButton button-main"
          ref="buttonRef"
          disabled="true"
          @click="console.log('clicked')"

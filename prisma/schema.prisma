@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String
+  password String
+  imageUrl String
+  lessonsHistory LessonsHistory[]
+  courses CoursesOnUsers[]
+  testsResults TestsResults[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Courses {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  users CoursesOnUsers[]
+  chapters Chapters[]
+}
+
+model CoursesOnUsers {
+  courses Courses @relation(fields: [courseId], references: [id])
+  courseId Int
+  users Users @relation(fields: [userId], references: [id])
+  userId Int
+  progress Int
+  assignedAt DateTime @default(now())
+
+  @@id([courseId, userId])
+  @@unique([courseId, userId])
+}
+
+model Chapters {
+  number Int @default(autoincrement())
+  name String
+  title String
+  description String?
+  course Courses @relation(fields: [courseId], references: [id])
+  courseId Int
+  lessons Lessons[]
+
+  @@id([number, courseId])
+  @@unique([number, courseId])
+}
+
+model LessonsHistory {
+  id Int @id @default(autoincrement())
+  completed Boolean @default(false)
+  user Users @relation(fields: [userId], references: [id])
+  userId Int @unique
+  lesson Lessons @relation(fields: [lessonType, lessonName, lessonDuration], references: [type, name, durationMinutes])
+  lessonType LessonType
+  lessonName String
+  lessonDuration Int
+  createdAt DateTime @default(now())
+}
+
+model Lessons {
+  number Int @default(autoincrement())
+  name String
+  type LessonType @default(VIDEO)
+  durationMinutes Int
+  numQuestions Int
+  chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId])
+  chapterNumber Int
+  courseId Int
+  questions Questions[]
+  lessonsHistory LessonsHistory[]
+  testsResults TestsResults[]
+
+  @@id([number, chapterNumber])
+  @@unique([number, chapterNumber])
+  @@unique([type, name, durationMinutes])
+}
+
+enum LessonType {
+  VIDEO
+  TEST
+}
+
+model Questions { 
+  number Int @default(autoincrement())
+  text String
+  alternatives Alternatives []
+  correctAnswer Int
+  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])
+  lessonNumber Int
+  chapterNumber Int
+
+  @@id([number, lessonNumber])
+  @@unique([number, lessonNumber])
+}
+
+model Alternatives {
+  number Int @default(autoincrement())
+  text String
+  question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber])
+  questionNumber Int
+  lessonNumber Int
+
+  @@id([number, questionNumber])
+  @@unique([number, questionNumber])
+}
+
+model TestsResults {
+  totalQuestions Int
+  correctAnswer Int
+  user Users @relation(fields: [userId], references: [id])
+  userId Int
+  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])
+  lessonNumber Int
+  chapterNumber Int
+
+  @@id([userId, lessonNumber])
+  @@unique([userId, lessonNumber])
+}

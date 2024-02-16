@@ -57,22 +57,4 @@ label {
       }
    }
 }
-
-.fade-enter-from,
-.fade-leave-to {
-   opacity: 0;
-   transform: scale(0);
-}
-
-.fade-enter-to,
-.fade-leave-from {
-   opacity: 1;
-   transform: scale(1);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-   transition: all 0.2s ease;
-   transform-origin: center;
-}
 </style>

@@ -18,7 +18,7 @@ const weekDays = [
          <div class="daily-bar" v-for="day in weekDays">
             <div class="bar-background bar-outer">
                <div class="red-background bar-inner">
-                  <span>{{ day.value }}</span>
+                  <span class="white-font">{{ day.value }}</span>
                </div>
             </div>
             <span>{{ day.name }}</span>

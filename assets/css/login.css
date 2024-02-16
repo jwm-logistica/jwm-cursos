@@ -35,6 +35,13 @@
    gap: 10px;
 }
 
+form {
+   display: flex;
+   flex-direction: column;
+   gap: 40px;
+   width: 100%;
+}
+
 .login-input-section {
    display: flex;
    flex-direction: column;

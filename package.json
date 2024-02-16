@@ -10,8 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@prisma/client": "^5.9.1",
+    "next-auth": "^4.22.5",
     "nuxt": "^3.10.1",
+    "prisma": "^5.9.1",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@sidebase/nuxt-auth": "^0.6.7",
+    "nuxt-icon": "^0.6.8"
   }
 }

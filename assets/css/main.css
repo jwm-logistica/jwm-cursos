@@ -92,16 +92,23 @@ button {
 }
 
 .red-font {
-   color: #e31c24;
+   color: #e31c24 !important;
+}
+
+.white-font {
+   color: #fbfbfb;
 }
 
 .red-background,
-button {
+.button-main {
    background-color: #e31c24;
    color: #fbfbfb;
+}
 
+.button-inverted {
+   background-color: #fbfbfb;
    * {
-      color: #fbfbfb;
+      color: #e31c24;
    }
 }
 
@@ -119,4 +126,22 @@ button {
 
 .spaced-body {
    padding: 35px 55px;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+   opacity: 0;
+   transform: scale(0);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+   opacity: 1;
+   transform: scale(1);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+   transition: all 0.2s ease-in-out;
+   transform-origin: center;
 }
