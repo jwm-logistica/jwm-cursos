@@ -13,20 +13,20 @@ datasource db {
 model Users {
   id    Int     @id @default(autoincrement())
   email String  @unique
-  name  String
+  name  String @db.VarChar(100)
   password String
   imageUrl String
   lessonsHistory LessonsHistory[]
   courses CoursesOnUsers[]
   testsResults TestsResults[]
   createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
+  updatedAt DateTime @updatedAt
 }
 
 model Courses {
   id Int @id @default(autoincrement())
-  name String
-  description String
+  name String @db.VarChar(100)
+  description String @db.Text
   users CoursesOnUsers[]
   chapters Chapters[]
 }
@@ -45,9 +45,9 @@ model CoursesOnUsers {
 
 model Chapters {
   number Int @default(autoincrement())
-  name String
+  name String @db.VarChar(100)
   title String
-  description String?
+  description String? @db.MediumText
   course Courses @relation(fields: [courseId], references: [id])
   courseId Int
   lessons Lessons[]
@@ -63,17 +63,18 @@ model LessonsHistory {
   userId Int @unique
   lesson Lessons @relation(fields: [lessonType, lessonName, lessonDuration], references: [type, name, durationMinutes])
   lessonType LessonType
-  lessonName String
+  lessonName String @db.VarChar(100)
   lessonDuration Int
   createdAt DateTime @default(now())
 }
 
 model Lessons {
   number Int @default(autoincrement())
-  name String
+  name String @db.VarChar(100)
   type LessonType @default(VIDEO)
-  durationMinutes Int
-  numQuestions Int
+  durationMinutes Int?
+  videoUrl String?
+  numQuestions Int?
   chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId])
   chapterNumber Int
   courseId Int
@@ -93,7 +94,7 @@ enum LessonType {
 
 model Questions { 
   number Int @default(autoincrement())
-  text String
+  text String @db.MediumText
   alternatives Alternatives []
   correctAnswer Int
   lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])
@@ -106,7 +107,7 @@ model Questions {
 
 model Alternatives {
   number Int @default(autoincrement())
-  text String
+  text String @db.Text
   question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber])
   questionNumber Int
   lessonNumber Int
@@ -117,7 +118,7 @@ model Alternatives {
 
 model TestsResults {
   totalQuestions Int
-  correctAnswer Int
+  correctAnswers Int
   user Users @relation(fields: [userId], references: [id])
   userId Int
   lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])

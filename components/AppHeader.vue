@@ -6,7 +6,7 @@ const isChecked = ref(false);
 async function handleSignOut() {
    await signOut({ callbackUrl: '/' });
 }
-</script>
+</script>   
 
 <template>
    <div class="header-box">

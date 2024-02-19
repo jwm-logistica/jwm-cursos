@@ -1,13 +1,16 @@
+<script setup>
+   const { course } = defineProps(["course"]);
+</script>
+
 <template>
    <NuxtLink to="/courses/1">
       <div class="course-box shadow bordered">
          <img src="/oea-logo.png" width="100" />
 
-         <div>
-            <h2>Certificado OEA</h2>
-            <p class="lighter">
-               Nullam aliquam tincidunt ante, id dignissim sem varius eget.
-               Etiam vitae arcu leo. Aliquam volutpat sem non mi condimentum...
+         <div class="course-name-description">
+            <h2>{{course.name}}</h2>
+            <p class="lighter description">
+               {{course.description.slice(0, 180) + '...'}}
             </p>
          </div>
 
@@ -33,6 +36,10 @@
    p {
       font-weight: lighter;
    }
+}
+
+.course-name-description {
+   max-height: 150px;
 }
 
 .progress-text {
