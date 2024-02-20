@@ -57,7 +57,7 @@ const historyData = [
 
 <style scoped>
 .history-box {
-   width: fit-content;
+   width: max-content;
    padding: 25px;
    display: flex;
    flex-direction: column;

@@ -2,12 +2,25 @@
    scrollbar-gutter: auto;
    display: flex;
    justify-content: space-between;
+   gap: 30px;
 }
 
-.courses-box {
+.courses-view {
    display: flex;
    flex-direction: column;
+   width: 100%;
    gap: 30px;
+}
+
+#masonry-layout-courses {
+   display: flex;
+   gap: 20px;
+}
+
+.masonry-column {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
 }
 
 .statistics-box {

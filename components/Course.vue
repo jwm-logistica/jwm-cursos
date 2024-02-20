@@ -1,25 +1,26 @@
 <script setup>
    const { course } = defineProps(["course"]);
+   const courseDescription = course.description.length > 250 ? course.description.slice(0, 250) + '...' : course.description;
 </script>
 
 <template>
    <NuxtLink to="/courses/1">
       <div class="course-box shadow bordered">
-         <img src="/oea-logo.png" width="100" />
+         <NuxtImg class="course-image" :src="course.imageUrl" height="70" :alt="'Logo do curso'+course.name" v-if="course.imageUrl"/>
 
          <div class="course-name-description">
             <h2>{{course.name}}</h2>
             <p class="lighter description">
-               {{course.description.slice(0, 180) + '...'}}
+               {{courseDescription}} 
             </p>
          </div>
 
          <div class="progress-text">
             <span>Progresso:</span>
-            <span class="lighter">8/9</span>
+            <span class="lighter">{{ course.progress + '/' + course.chaptersAmount }}</span>
          </div>
 
-         <ProgressBar />
+         <ProgressBar :progress="(course.progress / course.chaptersAmount) * 100"/>
       </div>
    </NuxtLink>
 </template>
@@ -38,8 +39,14 @@
    }
 }
 
+.course-image {
+   object-fit: contain;
+   width: fit-content;
+   border-radius: 10px;
+}
+
 .course-name-description {
-   max-height: 150px;
+   max-height: max-content;
 }
 
 .progress-text {

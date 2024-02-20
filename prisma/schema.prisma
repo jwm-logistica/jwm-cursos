@@ -27,14 +27,15 @@ model Courses {
   id Int @id @default(autoincrement())
   name String @db.VarChar(100)
   description String @db.Text
+  imageUrl String?
   users CoursesOnUsers[]
   chapters Chapters[]
 }
 
 model CoursesOnUsers {
-  courses Courses @relation(fields: [courseId], references: [id])
+  courses Courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int
-  users Users @relation(fields: [userId], references: [id])
+  users Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
   progress Int
   assignedAt DateTime @default(now())
@@ -48,7 +49,7 @@ model Chapters {
   name String @db.VarChar(100)
   title String
   description String? @db.MediumText
-  course Courses @relation(fields: [courseId], references: [id])
+  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int
   lessons Lessons[]
 
@@ -59,9 +60,9 @@ model Chapters {
 model LessonsHistory {
   id Int @id @default(autoincrement())
   completed Boolean @default(false)
-  user Users @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int @unique
-  lesson Lessons @relation(fields: [lessonType, lessonName, lessonDuration], references: [type, name, durationMinutes])
+  lesson Lessons @relation(fields: [lessonType, lessonName, lessonDuration], references: [type, name, durationMinutes], onDelete: Cascade, onUpdate: Cascade)
   lessonType LessonType
   lessonName String @db.VarChar(100)
   lessonDuration Int
@@ -75,7 +76,7 @@ model Lessons {
   durationMinutes Int?
   videoUrl String?
   numQuestions Int?
-  chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId])
+  chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId], onDelete: Cascade, onUpdate: Cascade)
   chapterNumber Int
   courseId Int
   questions Questions[]
@@ -97,7 +98,7 @@ model Questions {
   text String @db.MediumText
   alternatives Alternatives []
   correctAnswer Int
-  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])
+  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
   chapterNumber Int
 
@@ -108,7 +109,7 @@ model Questions {
 model Alternatives {
   number Int @default(autoincrement())
   text String @db.Text
-  question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber])
+  question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber], onDelete: Cascade, onUpdate: Cascade)
   questionNumber Int
   lessonNumber Int
 
@@ -119,9 +120,9 @@ model Alternatives {
 model TestsResults {
   totalQuestions Int
   correctAnswers Int
-  user Users @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
-  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber])
+  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
   chapterNumber Int
 

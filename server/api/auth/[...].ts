@@ -40,7 +40,7 @@ export default NuxtAuthHandler({
                 if(credentials?.password === user?.password) {
                     return {
                         name: user.name,
-                        email: user.id + '-' + user.email,
+                        email: user.id + '-' + user.email, //cheese way to get the user id without using local credentials
                         image: user.imageUrl
                     }
                 } else {

@@ -1,6 +1,17 @@
+<script setup>
+const { progress } = defineProps(["progress"]);
+
+let actualProgress = 0;
+if(progress && progress != Infinity) {
+   actualProgress = progress;
+} else if(progress == Infinity) {
+   actualProgress = 100;
+}
+</script>
+
 <template>
    <div class="progress-bar bar-background">
-      <div class="red-background" />
+      <div class="red-background" :style="'width:'+actualProgress+'%'"/>
    </div>
 </template>
 
