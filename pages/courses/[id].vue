@@ -1,41 +1,24 @@
 <script setup>
-const { id } = useRoute().params;
-const chapters = [
-   {
-      title: "Capítulo 1 - Processos e Procedimentos",
-      lessons: [
-         { done: true, name: "Vídeo Aula 1", isVideo: true, show: false },
-         { done: false, name: "Vídeo Aula 2", isVideo: true, show: false },
-         {
-            done: false,
-            name: "Teste do capítulo",
-            isVideo: false,
-            show: false,
-         },
-      ],
-   },
-   {
-      title: "Capítulo 2 - Processos e Procedimentos",
-      lessons: [
-         { done: true, name: "Vídeo Aula 1", isVideo: true, show: false },
-         {
-            done: false,
-            name: "Teste do capítulo",
-            isVideo: false,
-            show: false,
-         },
-      ],
-   },
-   {
-      title: "Capítulo 3 - Processos e Procedimentos",
-      lessons: [],
-   },
-];
+const route = useRoute();
+const { id } = route.params;
+const userId = route.query.userId;
+
+const { chapters } = await $fetch('/api/chapters', { params: { id: id }});
+const { course } = await $fetch('/api/course', { params: { id: id, userId: userId }});
 
 const lessonSelected = ref({
-   selected: "",
+   name: "",
    isVideo: true,
-   data: { title: "", text: "", videoUrl: "" },
+   videoUrl: "",
+});
+
+const windowWidth = process.client ? window.innerWidth : 1488;
+const descriptionSize = Math.floor(windowWidth / 51.31);
+
+const chapterSelected = ref({
+   name: chapters[0].name,
+   title: chapters[0].title,
+   description: chapters[0].description
 });
 </script>
 
@@ -54,6 +37,7 @@ const lessonSelected = ref({
                :chapter="chapter"
                v-for="chapter in chapters"
                @lessonSelection="value => (lessonSelected = value)"
+               @chaterSelection="value => (chapterSelected = value)"
             />
          </div>
 
@@ -61,53 +45,18 @@ const lessonSelected = ref({
             <div class="chapter-text">
                <div>
                   <div class="course-chapter-title">
-                     <h1 class="red-font">CURSO: [{{ id }}]</h1>
+                     <h1 class="red-font" style="white-space: nowrap;">{{ course.name }}</h1>
                      <div class="line" />
-                     <h1>PROCEDIMENTOS E PROCESSOS</h1>
+                     <h1>{{ chapterSelected.name.slice(0, descriptionSize) + '...' }}</h1>
                   </div>
-
-                  <h2>
-                     “Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                     Integer lacinia nunc ac turpis egesta”
-                  </h2>
+                  <h2> {{ chapterSelected.title }}</h2>
                </div>
-               <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Integer lacinia nunc ac turpis egestas suscipit. Morbi laoreet
-                  velit dolor, sed pulvinar nisl vehicula sagittis. Ut vitae
-                  purus nisi. Aenean iaculis cursus elit et ultrices. Etiam nunc
-                  nulla, pharetra varius porta eu, pellentesque eget nulla.
-                  Pellentesque sit amet aliquet dui. Nam consectetur ex volutpat
-                  augue laoreet, non dignissim ex imperdiet. Vestibulum interdum
-                  sagittis convallis. In sit amet viverra eros, eget mattis
-                  dolor. Sed at lacus condimentum nulla mattis pharetra. Nam
-                  felis tortor, facilisis quis nunc sit amet, tempor dignissim
-                  augue. Vivamus pretium, nisl ut auctor lobortis, arcu turpis
-                  cursus felis, sit amet egestas ex est a leo. Cras tincidunt
-                  tempus nunc ac mattis. Sed sed tristique ante. In lacinia in
-                  mi a pellentesque. Vestibulum a felis justo. Praesent magna
-                  lorem, luctus blandit sem sed, blandit dictum lectus.
-                  Vestibulum porta sapien sit amet tellus finibus, et eleifend
-                  velit sollicitudin. Phasellus sed enim id nibh congue cursus
-                  non fermentum purus. Proin lobortis, diam eu porttitor
-                  pharetra, augue ipsum accumsan nulla, non viverra massa ligula
-                  id augue. Donec varius eros eget dui elementum, in congue
-                  velit tristique. Etiam non fringilla justo. Vivamus egestas
-                  neque id placerat fermentum. Integer mollis vestibulum metus,
-                  et rutrum libero. Aenean eros tellus, porttitor vel ultrices
-                  vitae, volutpat sit amet nunc. Curabitur semper magna ligula,
-                  ut aliquam dui fringilla fermentum. Nam in erat at dolor
-                  tempus tincidunt. Morbi mi enim, molestie id ultricies semper,
-                  sollicitudin eu quam. Etiam consequat, velit sed sodales
-                  tempus, orci quam sodales massa, ac euismod dolor mauris sit
-                  amet ex. Suspendisse eleifend tristique dui ut pharetra. In
-                  facilisis elit nec aliquam condimentum. Aliquam elementum
-                  dolor a elit lobortis, ut pretium urna vulputate.
-               </p>
+
+               <p>{{ chapterSelected.description }} </p>
             </div>
 
             <div class="chapter-video-box" v-if="lessonSelected.isVideo">
-               <h2>Vídeo aula []:</h2>
+               <h2>{{ lessonSelected.name }}</h2>
                <div class="chapter-video bordered shadow" />
             </div>
 

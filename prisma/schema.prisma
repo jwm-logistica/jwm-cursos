@@ -58,15 +58,16 @@ model Chapters {
 }
 
 model LessonsHistory {
-  id Int @id @default(autoincrement())
   completed Boolean @default(false)
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId Int @unique
-  lesson Lessons @relation(fields: [lessonType, lessonName, lessonDuration], references: [type, name, durationMinutes], onDelete: Cascade, onUpdate: Cascade)
-  lessonType LessonType
-  lessonName String @db.VarChar(100)
-  lessonDuration Int
+  userId Int
+  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
+  lessonNumber Int
+  chapterNumber Int
   createdAt DateTime @default(now())
+
+  @@id([userId, lessonNumber])
+  @@unique([userId, lessonNumber])
 }
 
 model Lessons {
@@ -75,7 +76,6 @@ model Lessons {
   type LessonType @default(VIDEO)
   durationMinutes Int?
   videoUrl String?
-  numQuestions Int?
   chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId], onDelete: Cascade, onUpdate: Cascade)
   chapterNumber Int
   courseId Int
@@ -85,7 +85,6 @@ model Lessons {
 
   @@id([number, chapterNumber])
   @@unique([number, chapterNumber])
-  @@unique([type, name, durationMinutes])
 }
 
 enum LessonType {
@@ -118,7 +117,6 @@ model Alternatives {
 }
 
 model TestsResults {
-  totalQuestions Int
   correctAnswers Int
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int

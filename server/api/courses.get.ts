@@ -14,16 +14,14 @@ export default defineEventHandler(async(event) => {
         where: {
             userId: id,
         }, 
-        select: {
+        include: {
             courses: {
                 include: {
                     _count: {
                         select: { chapters: true }
                     },
                 }
-            },
-            progress: true,
-            assignedAt: true,
+            }
         }
     }).catch(e => {
         error = e;
@@ -35,14 +33,16 @@ export default defineEventHandler(async(event) => {
     }
     
     if(res) {
-        const courses = res.map((resCourse : any) => ({
-            id: resCourse.courses.id,
-            name: resCourse.courses.name,
-            description: resCourse.courses.description,
-            imageUrl: resCourse.courses.imageUrl,
-            chaptersAmount: resCourse.courses._count.chapters,
-            progress: resCourse.progress,
-            assignedAt: resCourse.assignedAt,
+        const courses = res.map((r : any) => ({
+            id: r.courseId,
+            userId: r.userId,
+            name: r.courses.name,
+            description: r.courses.description,
+            imageUrl: r.courses.imageUrl,
+            chaptersAmount: r.courses._count.chapters,
+            progress: r.progress,
+            assignedAt: r.assignedAt,
+
         }));
     
         return { courses };

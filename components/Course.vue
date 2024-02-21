@@ -4,7 +4,7 @@
 </script>
 
 <template>
-   <NuxtLink to="/courses/1">
+   <NuxtLink :to="'/courses/'+course.id+'?userId='+encodeURIComponent(course.userId)">
       <div class="course-box shadow bordered">
          <NuxtImg class="course-image" :src="course.imageUrl" height="70" :alt="'Logo do curso'+course.name" v-if="course.imageUrl"/>
 

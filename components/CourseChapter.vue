@@ -8,12 +8,24 @@ const chapterLessonsRef = ref(chapterLessons);
 
 const isChecked = ref(false);
 
+const emit = defineEmits(["chapterSelection", "lessonSelection"]);
+const onChapterSelection = value => {
+   emit("chapterSelection", value);
+};
+
 let timeoutID = null;
 const onChapterCheck = show => {
+   onChapterSelection({
+      name: chapter.name,
+      title: chapter.title,
+      description: chapter.description
+   });
+
    const timeInMS = 200;
    clearTimeout(timeoutID);
 
    if (show) {
+      //coming
       for (let i = 0; i < chapterLessons.length; i++) {
          const delay = timeInMS * i;
          timeoutID = setTimeout(() => {
@@ -21,9 +33,9 @@ const onChapterCheck = show => {
          }, delay);
       }
    } else {
+      //going 
       for (let i = chapterLessons.length - 1; i >= 0; i--) {
          const delay = timeInMS * (chapterLessons.length - 1 - i);
-         console.log(delay);
          timeoutID = setTimeout(() => {
             chapterLessonsRef.value[i].show = show;
          }, delay);
@@ -31,7 +43,6 @@ const onChapterCheck = show => {
    }
 };
 
-const emit = defineEmits(["lessonSelection"]);
 const onLessonSelection = value => {
    emit("lessonSelection", value);
 };
@@ -49,7 +60,7 @@ const onLessonSelection = value => {
       >
          <input type="checkbox" />
          <div class="chapter-box bordered shadow">
-            <span>{{ chapter.title }}</span>
+            <span>{{ chapter.name }}</span>
          </div>
       </label>
 
@@ -87,8 +98,9 @@ label {
    display: flex;
    align-items: center;
    padding: 20px;
-   width: max-content;
+   width: 100%;
    cursor: pointer;
+   min-width: 325px;
 }
 
 .lessons {
