@@ -5,6 +5,7 @@ const emit = defineEmits(["toggle"]);
 
 const selectLesson = () => {
    const value = {
+      number: lesson.number,
       name: lesson.name,
       isVideo: lesson.type === 'VIDEO',
       videoUrl: lesson.videoUrl,

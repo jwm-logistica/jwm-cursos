@@ -7,6 +7,10 @@
    color: #414141;
 }
 
+html {
+   overflow-y: scroll;
+}
+
 body,
 .border-circle {
    background-color: #fbfbfb;

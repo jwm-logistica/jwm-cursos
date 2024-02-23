@@ -15,11 +15,7 @@ const onChapterSelection = value => {
 
 let timeoutID = null;
 const onChapterCheck = show => {
-   onChapterSelection({
-      name: chapter.name,
-      title: chapter.title,
-      description: chapter.description
-   });
+   onChapterSelection(chapter);
 
    const timeInMS = 200;
    clearTimeout(timeoutID);

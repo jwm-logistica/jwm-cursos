@@ -5,7 +5,7 @@ export default defineEventHandler(async(event) => {
     const id = parseInt(getQuery(event)?.id as string);
 
     if(!id) {
-        console.log("ID not submited in URI ")
+        console.log("ID not submited in URI")
     }
 
     let error = null;

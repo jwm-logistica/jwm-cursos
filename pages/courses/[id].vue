@@ -3,23 +3,45 @@ const route = useRoute();
 const { id } = route.params;
 const userId = route.query.userId;
 
-const { chapters } = await $fetch('/api/chapters', { params: { id: id }});
-const { course } = await $fetch('/api/course', { params: { id: id, userId: userId }});
+const { data, pending } = await useAsyncData('user-course-chapters', async () => {
+   const [ course, chapters ] = await Promise.all([
+      $fetch('/api/course', { params: { id: id, userId: userId }}),
+      $fetch('/api/chapters', { params: { id: id }})
+   ])
 
-const lessonSelected = ref({
-   name: "",
-   isVideo: true,
-   videoUrl: "",
-});
+   return { ...course, ...chapters }
+})
 
-const windowWidth = process.client ? window.innerWidth : 1488;
-const descriptionSize = Math.floor(windowWidth / 51.31);
+const course = data.value.course;
+const chapters = data.value.chapters;
 
 const chapterSelected = ref({
+   number: chapters[0].number,
    name: chapters[0].name,
    title: chapters[0].title,
    description: chapters[0].description
 });
+
+const lessonSelected = ref({
+   number: -1,
+   name: '',
+   isVideo: true,
+   videoUrl: '',
+});
+
+const logarithmicFunction = (x) => {
+   //a function to mimic the amount of characters in the subtitle per window width size
+   const result = 30*Math.log(0.01*x-3.83)-42.6;
+   return result > 0 ? result : 0;
+}
+
+const descriptionSliced = () => {
+   //slice the description by a amount depending on the window width size;
+   const windowWidth = process.client ? window.innerWidth : 1488;
+   const descriptionSize = Math.floor(logarithmicFunction(windowWidth));
+   const ellipsis = descriptionSize >= chapterSelected.value.name.length ? '' : '...';
+   return chapterSelected.value.name.slice(0, descriptionSize) + ellipsis;
+}
 </script>
 
 <template>
@@ -30,8 +52,8 @@ const chapterSelected = ref({
          <div class="side-bar">
             <div class="back-and-progress">
                <NuxtLink to="/courses" class="red-font">Voltar</NuxtLink>
-               <ProgressBar />
-               <span class="lighter">8/9</span>
+               <ProgressBar :progress="(course.progress / chapters.length) * 100"/>
+               <span class="lighter">{{ course.progress + '/' + chapters.length }}</span>
             </div>
             <CourseChapter
                :chapter="chapter"
@@ -47,20 +69,28 @@ const chapterSelected = ref({
                   <div class="course-chapter-title">
                      <h1 class="red-font" style="white-space: nowrap;">{{ course.name }}</h1>
                      <div class="line" />
-                     <h1>{{ chapterSelected.name.slice(0, descriptionSize) + '...' }}</h1>
+                     <h1>{{ descriptionSliced() }}</h1>
                   </div>
-                  <h2> {{ chapterSelected.title }}</h2>
+                  <h2 v-if="lessonSelected.isVideo"> {{ chapterSelected.title }}</h2>
+                  <h2 v-else>{{ lessonSelected.name }}</h2>
                </div>
 
-               <p>{{ chapterSelected.description }} </p>
+               <ClientOnly>
+                  <!-- ClientOnly is to prevent a warning caused by white-space:pre-line -->
+                  <p style="white-space: pre-line;" v-if="lessonSelected.isVideo">{{ chapterSelected.description }} </p>
+               </ClientOnly>
             </div>
 
-            <div class="chapter-video-box" v-if="lessonSelected.isVideo">
+            <div class="chapter-video-box" v-if="lessonSelected.isVideo && lessonSelected.videoUrl!='' ">
                <h2>{{ lessonSelected.name }}</h2>
                <div class="chapter-video bordered shadow" />
             </div>
 
-            <ChapterTest v-if="!lessonSelected.isVideo" />
+            <ChapterTest 
+               v-else-if="!pending && !lessonSelected.isVideo"
+               :lessonNumber="lessonSelected.number"
+               :chapterNumber="chapterSelected.number"
+            />
          </div>
       </div>
    </div>

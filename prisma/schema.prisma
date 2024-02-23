@@ -96,7 +96,6 @@ model Questions {
   number Int @default(autoincrement())
   text String @db.MediumText
   alternatives Alternatives []
-  correctAnswer Int
   lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
   chapterNumber Int
@@ -108,6 +107,7 @@ model Questions {
 model Alternatives {
   number Int @default(autoincrement())
   text String @db.Text
+  correctAnswer Boolean
   question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber], onDelete: Cascade, onUpdate: Cascade)
   questionNumber Int
   lessonNumber Int
