@@ -1,22 +1,24 @@
 <script setup>
-const { chapter } = defineProps(["chapter"]);
+const props = defineProps({
+  chapter: Object
+});
+
+const { chapter } = props;
 
 const chapterLessons = chapter.lessons.map(lesson => {
-   return { ...lesson, show: false };
+   return { ...lesson, show: false, active: false };
 });
+
 const chapterLessonsRef = ref(chapterLessons);
 
-const isChecked = ref(false);
-
 const emit = defineEmits(["chapterSelection", "lessonSelection"]);
-const onChapterSelection = value => {
-   emit("chapterSelection", value);
-};
+
+watch(() => props.chapter, (newValue) => {
+   onChapterCheck(newValue.active);
+}, { deep: true })
 
 let timeoutID = null;
 const onChapterCheck = show => {
-   onChapterSelection(chapter);
-
    const timeInMS = 200;
    clearTimeout(timeoutID);
 
@@ -39,64 +41,53 @@ const onChapterCheck = show => {
    }
 };
 
-const onLessonSelection = value => {
-   emit("lessonSelection", value);
+const onLessonSelection = number => {
+   chapterLessonsRef.value = chapterLessonsRef.value.map(lesson => ({
+      ...lesson,
+      active: lesson.number === number && !lesson.active
+   }));
+
+   emit("lessonSelection", number);
 };
+
+const handleClick = () => {
+   emit("chapterSelection", chapter.number);
+}
 </script>
 
 <template>
    <div class="chapter-dropdown">
-      <label
-         @change="
-            () => {
-               isChecked = !isChecked;
-               onChapterCheck(isChecked);
-            }
-         "
-      >
-         <input type="checkbox" />
-         <div class="chapter-box bordered shadow">
-            <span>{{ chapter.name }}</span>
-         </div>
-      </label>
+      <button @click="handleClick" class="chapter-box bordered shadow">
+         <span>{{ chapter.name }}</span>
+      </button>
 
       <div class="lessons">
          <Lesson
             v-for="lesson in chapterLessonsRef"
             :lesson="lesson"
-            @toggle="value => onLessonSelection(value)"
+            @toggle="number => onLessonSelection(number)"
          />
       </div>
    </div>
 </template>
 
 <style scoped>
-input {
-   box-shadow: none;
-   display: none;
-}
-
 .chapter-dropdown {
    display: flex;
    flex-direction: column;
    align-items: center;
 }
 
-label {
-   margin-bottom: 10px;
-}
-
-:checked + div {
-   outline: 1px solid black;
-}
-
 .chapter-box {
    display: flex;
+   background-color: #fbfbfb;
    align-items: center;
+   text-align: start;
    padding: 20px;
    width: 100%;
    cursor: pointer;
    min-width: 325px;
+   margin-bottom: 10px;
 }
 
 .lessons {

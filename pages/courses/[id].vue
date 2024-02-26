@@ -13,21 +13,46 @@ const { data, pending } = await useAsyncData('user-course-chapters', async () =>
 })
 
 const course = data.value.course;
-const chapters = data.value.chapters;
+const chapters = ref(data.value.chapters.map((chapter) => {
+   return { ...chapter, active: false }
+}))
 
 const chapterSelected = ref({
-   number: chapters[0].number,
-   name: chapters[0].name,
-   title: chapters[0].title,
-   description: chapters[0].description
+   number: chapters.value[0].number,
+   name: chapters.value[0].name,
+   title: chapters.value[0].title,
+   description: chapters.value[0].description,
+   lessons: chapters.value[0].lessons
 });
 
 const lessonSelected = ref({
    number: -1,
    name: '',
-   isVideo: true,
+   type: 'VIDEO',
    videoUrl: '',
 });
+
+const chapterSelection = (chapterNumber) => {
+   //desactivate all the chapters except for the selected one (if it is already selected, then desactivate too)
+   chapters.value = chapters.value.map(chapter => ({
+      ...chapter,
+      active: chapter.number === chapterNumber && !chapter.active
+   }));
+
+   chapterSelected.value = chapters.value.find(chapter => chapter.number === chapterNumber);
+
+   //resets the value of the lesson
+   lessonSelected.value = {
+      number: -1,
+      name: '',
+      type: 'VIDEO',
+      videoUrl: '',
+   }
+};
+
+const lessonSelection = (lessonNumber) => {
+   lessonSelected.value = chapterSelected.value.lessons.find(lesson => lesson.number == lessonNumber);
+}
 
 const logarithmicFunction = (x) => {
    //a function to mimic the amount of characters in the subtitle per window width size
@@ -56,10 +81,11 @@ const descriptionSliced = () => {
                <span class="lighter">{{ course.progress + '/' + chapters.length }}</span>
             </div>
             <CourseChapter
-               :chapter="chapter"
                v-for="chapter in chapters"
-               @lessonSelection="value => (lessonSelected = value)"
-               @chaterSelection="value => (chapterSelected = value)"
+               :key="chapter.number"
+               :chapter="chapter"
+               @chapterSelection="number => chapterSelection(number)"
+               @lessonSelection="number => lessonSelection(number)"
             />
          </div>
 
@@ -71,25 +97,25 @@ const descriptionSliced = () => {
                      <div class="line" />
                      <h1>{{ descriptionSliced() }}</h1>
                   </div>
-                  <h2 v-if="lessonSelected.isVideo"> {{ chapterSelected.title }}</h2>
+                  <h2 v-if="lessonSelected.type == 'VIDEO'"> {{ chapterSelected.title }}</h2>
                   <h2 v-else>{{ lessonSelected.name }}</h2>
                </div>
 
                <ClientOnly>
                   <!-- ClientOnly is to prevent a warning caused by white-space:pre-line -->
-                  <p style="white-space: pre-line;" v-if="lessonSelected.isVideo">{{ chapterSelected.description }} </p>
+                  <p style="white-space: pre-line;" v-if="lessonSelected.type == 'VIDEO'">{{ chapterSelected.description }} </p>
                </ClientOnly>
             </div>
 
-            <div class="chapter-video-box" v-if="lessonSelected.isVideo && lessonSelected.videoUrl!='' ">
+            <div class="chapter-video-box" v-if="lessonSelected.type == 'VIDEO' && lessonSelected.videoUrl != '' ">
                <h2>{{ lessonSelected.name }}</h2>
                <div class="chapter-video bordered shadow" />
             </div>
 
             <ChapterTest 
-               v-else-if="!pending && !lessonSelected.isVideo"
-               :lessonNumber="lessonSelected.number"
-               :chapterNumber="chapterSelected.number"
+               v-else-if="!pending && !(lessonSelected.type == 'VIDEO')"
+               :lessonNumber="+lessonSelected.number"
+               :chapterNumber="+chapterSelected.number"
             />
          </div>
       </div>

@@ -1,7 +1,10 @@
+<script setup>
+</script>
+
 <template>
    <div class="circle-base-line">
       <div class="base-line" />
-      <div class="border-circle" />
+      <div ref="circleRef" class="border-circle" />
    </div>
 </template>
 
@@ -16,6 +19,10 @@
    height: 18px;
    border: 1px solid #dbdbdb;
    border-radius: 50%;
+}
+
+.active {
+   border: 2px solid #414141;
 }
 
 .base-line {

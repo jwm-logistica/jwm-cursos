@@ -1,8 +1,9 @@
 <script setup>
+const route = useRoute();
 const { lessonNumber, chapterNumber } = defineProps(["lessonNumber", "chapterNumber"]);
 
 const currentIndex = ref(0);
-const { questionsFromLesson } = await $fetch('/api/questions', { params: { id: lessonNumber, chapterNumber: chapterNumber } });
+const { questionsFromLesson } = await $fetch('/api/questions', { params: { id: lessonNumber, chapterNumber: chapterNumber } }).catch(e=> console.log(e))
 
 const questions = ref(questionsFromLesson.questions?.map((question) => {
    const alternatives = question.alternatives?.map((alt, index) => {
@@ -36,10 +37,26 @@ const onChange = (alternative) => {
    currentAlternative.value = alternative;
 };
 
+const submitResults = async() => {
+   return await $fetch('/api/results', {
+      method: 'POST',
+      body: {
+         userId: +route.query.userId,
+         lessonNumber: lessonNumber,
+         chapterNumber: chapterNumber,
+         correctAnswers: getResults().correct,
+      }
+   })
+}
+ 
 const onSubmit = (forward=true) => {
    if(forward && currentIndex.value == questions.value.length -1) {
+      if(bodyAdditionalStyle.value) {
+         //if the addtional style of the body is already set and the user pressed "finish" again...
+      }
       //if the user finished the test, then change the body style and show the results
       bodyAdditionalStyle.value = "opacity: 20%; cursor: default; pointer-events: none;"
+      submitResults();
    } else if(!forward && currentIndex.value == questions.value.length -1 && bodyAdditionalStyle.value != '') {
       //if the user finished the test but pressed retry then resets everything
       questions.value = questions.value.map((question) => {
@@ -122,7 +139,6 @@ const getResults = () => {
    questions.value.forEach(question => {
       question.alternatives.forEach(alt => {
          if(alt.selected && alt.correctAnswer) {
-            console.log(alt);
             correctAnswersCount+=1;
          }
       })

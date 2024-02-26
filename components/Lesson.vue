@@ -1,17 +1,14 @@
 <script setup>
-const { lesson } = defineProps(["lesson"]);
+const props = defineProps({
+   lesson: Object
+});
+
+const lesson = props.lesson;
 
 const emit = defineEmits(["toggle"]);
 
 const selectLesson = () => {
-   const value = {
-      number: lesson.number,
-      name: lesson.name,
-      isVideo: lesson.type === 'VIDEO',
-      videoUrl: lesson.videoUrl,
-   };
-
-   emit("toggle", value);
+   emit("toggle", lesson.number);
 };
 </script>
 
@@ -21,7 +18,11 @@ const selectLesson = () => {
          <CircleWBaseLine />
          <label @change="() => selectLesson()">
             <input type="radio" name="lesson" />
-            <span>{{ lesson.name }}</span>
+            <div class="lesson-name-icon">
+               <span>{{ lesson.name }}</span>
+               <Icon name="ic:baseline-ondemand-video" size="20px" class="main-icon" v-if="lesson.type == 'VIDEO'"/>
+               <Icon name="mdi:file-document-edit-outline" size="20px" class="main-icon" v-if="lesson.type == 'TEST'"/>
+            </div>
          </label>
       </div>
    </transition>
@@ -33,8 +34,10 @@ input {
    display: none;
 }
 
-:checked + span {
-   font-weight: bold;
+:checked + div {
+   * {
+      font-weight: bold;
+   }
 }
 
 label {
@@ -53,9 +56,17 @@ label {
       margin: 0;
       cursor: pointer;
 
-      span {
-         line-height: 17px;
-      }
+      
+   }
+}
+
+.lesson-name-icon {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+
+   span {
+      line-height: 17px;
    }
 }
 </style>
