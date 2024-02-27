@@ -2,7 +2,8 @@
    const { data } = useAuth();
    const id = +data.value.user.email.split("-")[0];
 
-   const {courses} = await $fetch(`/api/courses?id=${encodeURIComponent(id)}`);
+   const { courses } = await $fetch(`/api/courses?id=${encodeURIComponent(id)}`);
+   const { history } = await $fetch(`/api/history?userId=${encodeURIComponent(id)}`)
 
    //creating the matrix for the courses
    const coursesMatrix = ref([]);
@@ -42,8 +43,8 @@
          </div>
 
          <div class="statistics-box">
-            <DailyConclusions />
-            <History />
+            <DailyConclusions :history="history" />
+            <History :history="history" />
          </div>
       </div>
    </div>

@@ -1,6 +1,7 @@
 <script setup>
 const route = useRoute();
 const { lessonNumber, chapterNumber } = defineProps(["lessonNumber", "chapterNumber"]);
+const emit = defineEmits(["nextLesson"]);
 
 const currentIndex = ref(0);
 const { questionsFromLesson } = await $fetch('/api/questions', { params: { id: lessonNumber, chapterNumber: chapterNumber } }).catch(e=> console.log(e))
@@ -38,7 +39,7 @@ const onChange = (alternative) => {
 };
 
 const submitResults = async() => {
-   return await $fetch('/api/results', {
+   const results = await $fetch('/api/results', {
       method: 'POST',
       body: {
          userId: +route.query.userId,
@@ -47,12 +48,24 @@ const submitResults = async() => {
          correctAnswers: getResults().correct,
       }
    })
+
+   //update user history
+   const history = await $fetch('/api/history', {
+      method: 'POST',
+      body: {
+         userId: +route.query.userId,
+         lessonNumber: lessonNumber,
+         chapterNumber: chapterNumber,
+         completed: true,
+      }
+   })
 }
  
 const onSubmit = (forward=true) => {
    if(forward && currentIndex.value == questions.value.length -1) {
       if(bodyAdditionalStyle.value) {
          //if the addtional style of the body is already set and the user pressed "finish" again...
+         return emit("nextLesson");
       }
       //if the user finished the test, then change the body style and show the results
       bodyAdditionalStyle.value = "opacity: 20%; cursor: default; pointer-events: none;"

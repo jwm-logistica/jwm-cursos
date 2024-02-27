@@ -14,7 +14,14 @@ const { data, pending } = await useAsyncData('user-course-chapters', async () =>
 
 const course = data.value.course;
 const chapters = ref(data.value.chapters.map((chapter) => {
-   return { ...chapter, active: false }
+   const lessons = chapter.lessons.map(lesson => {
+      return {
+         ...lesson,
+         active: false,
+         show: false,
+      }
+   })
+   return { ...chapter, lessons: lessons, active: false }
 }))
 
 const chapterSelected = ref({
@@ -25,33 +32,79 @@ const chapterSelected = ref({
    lessons: chapters.value[0].lessons
 });
 
-const lessonSelected = ref({
+const defaultSelectedLesson = {
    number: -1,
    name: '',
    type: 'VIDEO',
    videoUrl: '',
-});
+}
+
+const lessonSelected = ref(defaultSelectedLesson);
 
 const chapterSelection = (chapterNumber) => {
    //desactivate all the chapters except for the selected one (if it is already selected, then desactivate too)
    chapters.value = chapters.value.map(chapter => ({
       ...chapter,
-      active: chapter.number === chapterNumber && !chapter.active
+      active: chapter.number === chapterNumber && !chapter.active,
    }));
 
    chapterSelected.value = chapters.value.find(chapter => chapter.number === chapterNumber);
 
    //resets the value of the lesson
-   lessonSelected.value = {
-      number: -1,
-      name: '',
-      type: 'VIDEO',
-      videoUrl: '',
-   }
+   lessonSelected.value = defaultSelectedLesson;
 };
 
+const updateUserHistory = async(lessonNumber, chapterNumber) => {
+   return await $fetch('/api/history', {
+      method: 'POST',
+      body: {
+         userId: parseInt(userId),
+         lessonNumber: lessonNumber,
+         chapterNumber: chapterNumber,
+         completed: true,
+      }
+   })
+}
+
+const nextLesson = () => {
+   const actualLessonIndex = chapterSelected.value.lessons.findIndex(lesson => lesson.number == lessonSelected.value.number);
+
+   updateUserHistory(lessonSelected.value.number, chapterSelected.value.number);
+
+   let nextLesson = defaultSelectedLesson;
+   if(actualLessonIndex + 1 < chapterSelected.value.lessons.length) {
+      //the next lesson is from the same chapter
+      nextLesson = chapterSelected.value.lessons[actualLessonIndex+1];
+      lessonSelection(nextLesson.number);
+   } else {  
+      const actualChapterIndex = chapters.value.findIndex(chapter => chapter.number == chapterSelected.value.number);
+      if(actualChapterIndex + 1 < chapters.value.length) {
+         //the next lesson is from the next chapter
+         const nextChapter = chapters.value[actualChapterIndex+1];
+         chapterSelection(nextChapter.number);
+
+         lessonSelection(null);
+      } else {
+         //there's no next chapter, change the button to goes to the main selection page
+      }
+   }
+}
+
 const lessonSelection = (lessonNumber) => {
-   lessonSelected.value = chapterSelected.value.lessons.find(lesson => lesson.number == lessonNumber);
+   //desactivate all the lessons except for the selected one (if it is already selected or the chapter is inactive, then desactivate too)
+   chapterSelected.value.lessons = chapterSelected.value.lessons.map(lesson => {
+      return {
+         ...lesson,
+         active: lesson.number === lessonNumber && !lesson.active
+      }
+   });
+
+   if(lessonNumber) {
+      lessonSelected.value = chapterSelected.value.lessons.find(lesson => lesson.number == lessonNumber);
+   } else {
+      //resets the value of the lesson
+      lessonSelected.value = defaultSelectedLesson;
+   }
 }
 
 const logarithmicFunction = (x) => {
@@ -111,11 +164,18 @@ const descriptionSliced = () => {
                <h2>{{ lessonSelected.name }}</h2>
                <div class="chapter-video bordered shadow" />
             </div>
+            <div class="next-lesson-button-box" v-if="lessonSelected.type == 'VIDEO' && lessonSelected.number != -1">
+               <button class="shadow bordered button-main" style="width:fit-content" @click="nextLesson">
+                  <span>PRÓXIMA AULA</span>
+                  <Icon name="ic:baseline-keyboard-arrow-right" size="25px"/>
+               </button>
+            </div>
 
             <ChapterTest 
-               v-else-if="!pending && !(lessonSelected.type == 'VIDEO')"
+               v-if="!pending && !(lessonSelected.type == 'VIDEO')"
                :lessonNumber="+lessonSelected.number"
                :chapterNumber="+chapterSelected.number"
+               @nextLesson="nextLesson"
             />
          </div>
       </div>

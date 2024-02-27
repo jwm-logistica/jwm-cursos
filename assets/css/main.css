@@ -69,7 +69,9 @@ input {
 button {
    display: flex;
    padding: 16px;
+   align-items: center;
    cursor: pointer;
+   transition: all 0.5s ease;
 }
 
 button,
@@ -91,9 +93,14 @@ input {
 }
 
 .shadow,
-input,
-button {
+input {
    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.darker-shadow {
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+   outline: 1px solid #414141;
 }
 
 .bordered {
@@ -112,6 +119,12 @@ button {
 .button-main {
    background-color: #e31c24;
    color: #fbfbfb;
+   path {
+      color: #fbfbfb;
+   };
+   span {
+      color: #fbfbfb;
+   }
 }
 
 .button-main, .button-inverted {

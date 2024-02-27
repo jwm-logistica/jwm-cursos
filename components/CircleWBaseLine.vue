@@ -1,10 +1,13 @@
 <script setup>
+const props = defineProps({
+   active: Boolean
+});
 </script>
 
 <template>
    <div class="circle-base-line">
       <div class="base-line" />
-      <div ref="circleRef" class="border-circle" />
+      <div ref="circleRef" class="border-circle" :style="active ? 'border: 2px solid #414141;' : ''" />
    </div>
 </template>
 

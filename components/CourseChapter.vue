@@ -5,48 +5,56 @@ const props = defineProps({
 
 const { chapter } = props;
 
-const chapterLessons = chapter.lessons.map(lesson => {
-   return { ...lesson, show: false, active: false };
-});
-
-const chapterLessonsRef = ref(chapterLessons);
+const lessons = toRef(chapter.lessons);
 
 const emit = defineEmits(["chapterSelection", "lessonSelection"]);
 
+const buttonRef = ref('');
+
+//whenever a chapter is selected, all the chapters will call the function to (un)show the lessons
 watch(() => props.chapter, (newValue) => {
    onChapterCheck(newValue.active);
 }, { deep: true })
 
+watch(() => props.chapter.lessons, (newValue) => {
+   lessons.value = newValue;
+}, { deep: true })
+
 let timeoutID = null;
 const onChapterCheck = show => {
+   //this is a function that shows one lesson after the other with a certain delay
    const timeInMS = 200;
    clearTimeout(timeoutID);
 
    if (show) {
       //coming
-      for (let i = 0; i < chapterLessons.length; i++) {
+      for (let i = 0; i < lessons.value.length; i++) {
          const delay = timeInMS * i;
          timeoutID = setTimeout(() => {
-            chapterLessonsRef.value[i].show = show;
+            lessons.value[i].show = show;
          }, delay);
       }
+
+      buttonRef.value.classList.remove('shadow');
+      buttonRef.value.classList.add('darker-shadow');
    } else {
       //going 
-      for (let i = chapterLessons.length - 1; i >= 0; i--) {
-         const delay = timeInMS * (chapterLessons.length - 1 - i);
+      for (let i = lessons.value.length - 1; i >= 0; i--) {
+         const delay = timeInMS * (lessons.value.length - 1 - i);
          timeoutID = setTimeout(() => {
-            chapterLessonsRef.value[i].show = show;
+            lessons.value[i].show = show;
          }, delay);
       }
+
+      buttonRef.value.classList.remove('darker-shadow');
+      buttonRef.value.classList.add('shadow');
+
+      //unselect any selected lesson
+      onLessonSelection(null);
    }
 };
 
 const onLessonSelection = number => {
-   chapterLessonsRef.value = chapterLessonsRef.value.map(lesson => ({
-      ...lesson,
-      active: lesson.number === number && !lesson.active
-   }));
-
    emit("lessonSelection", number);
 };
 
@@ -57,13 +65,13 @@ const handleClick = () => {
 
 <template>
    <div class="chapter-dropdown">
-      <button @click="handleClick" class="chapter-box bordered shadow">
+      <button ref="buttonRef" @click="handleClick" class="chapter-box bordered shadow">
          <span>{{ chapter.name }}</span>
       </button>
 
       <div class="lessons">
          <Lesson
-            v-for="lesson in chapterLessonsRef"
+            v-for="lesson in lessons"
             :lesson="lesson"
             @toggle="number => onLessonSelection(number)"
          />

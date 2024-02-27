@@ -40,6 +40,13 @@
    gap: 12px;
 }
 
+.next-lesson-button-box {
+   margin-top: 20px;
+   width: 100%;
+   display: flex;
+   justify-content: flex-end;
+}
+
 .chapter-video {
    background-color: #c4c4c4;
    width: 100%;
