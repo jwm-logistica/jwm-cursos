@@ -1,17 +1,22 @@
 <script setup>
-const { progress } = defineProps(["progress"]);
+const props = defineProps({
+  progress: Number
+});
 
-let actualProgress = 0;
-if(progress && progress != Infinity) {
-   actualProgress = progress;
-} else if(progress == Infinity) {
-   actualProgress = 100;
-}
+const currentProgress = ref(0);
+
+watch(() => props.progress, (newProgress) => {
+   if(newProgress && newProgress != Infinity) {
+      currentProgress.value = newProgress;
+   } else if(newProgress == Infinity) {
+      currentProgress.value = 100;
+   }
+}, { deep: true, immediate: true })
 </script>
 
 <template>
    <div class="progress-bar bar-background">
-      <div class="red-background" :style="'width:'+actualProgress+'%'"/>
+      <div class="red-background" :style="'transition: all 2s ease; width:'+currentProgress+'%'"/>
    </div>
 </template>
 

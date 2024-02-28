@@ -90,6 +90,8 @@ input {
    width: 2px;
    height: 25px;
    background-color: #f4e6e6;
+   margin: 0px 10px;
+   display: inline-block;
 }
 
 .shadow,

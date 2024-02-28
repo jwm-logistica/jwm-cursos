@@ -4,6 +4,7 @@
 }
 
 .side-bar {
+   max-width: 325px;
    width: fit-content;
    display: flex;
    flex-direction: column;
@@ -17,9 +18,15 @@
 }
 
 .course-chapter-title {
-   display: flex;
-   align-items: center;
-   gap: 10px;
+   display: inline-block;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+
+   h1 {
+     display: inline;
+     white-space: nowrap;
+   }
 }
 
 .chapter-view {

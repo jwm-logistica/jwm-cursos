@@ -16,9 +16,9 @@ watch(() => props.chapter, (newValue) => {
    onChapterCheck(newValue.active);
 }, { deep: true })
 
-watch(() => props.chapter.lessons, (newValue) => {
-   lessons.value = newValue;
-}, { deep: true })
+// watch(() => props.chapter.lessons, (newValue) => {
+//    lessons.value = newValue;
+// }, { deep: true })
 
 let timeoutID = null;
 const onChapterCheck = show => {

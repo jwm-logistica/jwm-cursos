@@ -4,28 +4,22 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async(event) => {
     const body = await readBody(event);
 
-    if(!body.userId || !body.lessonNumber || !body.chapterNumber || !body.correctAnswers) {
-        console.log("Data not submitted in results body", body)
+    if(!body.courseId || !body.userId || !body.progress) {
+        console.log("Data not submitted in progress body", body)
         return createError({statusCode: 500, statusMessage: 'Server error'})
     }
 
     let error = null;
 
-    const res = await prisma.testsResults.upsert({
+    const res = await prisma.coursesOnUsers.update({
         where: {
-            userId_lessonNumber: {
+            courseId_userId: {
+                courseId: body.courseId,
                 userId: body.userId,
-                lessonNumber: body.lessonNumber
             }
         },
-        update: {
-            correctAnswers: body.correctAnswers
-        }, 
-        create: {
-            correctAnswers: body.correctAnswers,
-            userId: body.userId,
-            lessonNumber: body.lessonNumber,
-            chapterNumber: body.chapterNumber
+        data: {
+            progress: body.progress,
         }
     }).catch(e => {
         error = e;

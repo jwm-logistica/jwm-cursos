@@ -1,13 +1,32 @@
 <script setup>
+const props = defineProps({
+  history: Object
+});
+
+const { history } = props;
+
 const weekDays = [
-   { name: "Dom", value: 5 },
-   { name: "Seg", value: 5 },
-   { name: "Ter", value: 5 },
-   { name: "Qua", value: 5 },
-   { name: "Qui", value: 5 },
-   { name: "Sex", value: 5 },
-   { name: "Sab", value: 5 },
+   { name: "Dom", value: 0, percentage: 100 },
+   { name: "Seg", value: 0, percentage: 100 },
+   { name: "Ter", value: 0, percentage: 100 },
+   { name: "Qua", value: 0, percentage: 100 },
+   { name: "Qui", value: 0, percentage: 100 },
+   { name: "Sex", value: 0, percentage: 100 },
+   { name: "Sab", value: 0, percentage: 100 },
 ];
+
+let highestValue = 0;
+history.forEach(hist => {
+   if(hist.completed) {
+      const index = new Date(hist.createdAt).getDay();
+      weekDays[index].value++;
+      highestValue = weekDays[index].value > highestValue ? weekDays[index].value : highestValue;
+      
+      weekDays.forEach(day => {
+         day.percentage = (day.value / highestValue) * 100;
+      })
+   }
+})
 </script>
 
 <template>
@@ -17,7 +36,7 @@ const weekDays = [
       <div class="daily-bars">
          <div class="daily-bar" v-for="day in weekDays">
             <div class="bar-background bar-outer">
-               <div class="red-background bar-inner">
+               <div class="red-background bar-inner" :style="'height: ' + day.percentage + '%'">
                   <span class="white-font">{{ day.value }}</span>
                </div>
             </div>
@@ -62,7 +81,6 @@ const weekDays = [
 
 .bar-inner {
    width: 100%;
-   height: 60%;
    display: flex;
    justify-content: center;
    align-items: center;

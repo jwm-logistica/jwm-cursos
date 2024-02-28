@@ -12,7 +12,7 @@ const { data, pending } = await useAsyncData('user-course-chapters', async () =>
    return { ...course, ...chapters }
 })
 
-const course = data.value.course;
+const course = ref(data.value.course);
 const chapters = ref(data.value.chapters.map((chapter) => {
    const lessons = chapter.lessons.map(lesson => {
       return {
@@ -37,6 +37,7 @@ const defaultSelectedLesson = {
    name: '',
    type: 'VIDEO',
    videoUrl: '',
+   completed: false,
 }
 
 const lessonSelected = ref(defaultSelectedLesson);
@@ -55,7 +56,7 @@ const chapterSelection = (chapterNumber) => {
 };
 
 const updateUserHistory = async(lessonNumber, chapterNumber) => {
-   return await $fetch('/api/history', {
+   await $fetch('/api/history', {
       method: 'POST',
       body: {
          userId: parseInt(userId),
@@ -63,13 +64,51 @@ const updateUserHistory = async(lessonNumber, chapterNumber) => {
          chapterNumber: chapterNumber,
          completed: true,
       }
+   }).then(async() => {
+      //update client side
+      lessonSelected.value.completed = true;
+
+      //updating lesson completion and progress client side
+      let progress = 0;
+      chapters.value.forEach(chapter => {
+         const lessonIndex = chapter.lessons.findIndex(lesson => lesson.number == lessonNumber);
+         
+         if(lessonIndex != -1) {
+            //update chapters first to be always upToDate when anything access it
+            chapter.lessons[lessonIndex].completed = true;
+         }
+
+         const allCompleted = chapter.lessons.every(lesson => lesson.completed);
+
+         if(allCompleted) {
+            progress++;
+         }
+      })
+
+      await $fetch('/api/progress', {
+         method: 'PUT',
+         body: {
+            userId: parseInt(userId),
+            courseId: course.value.id,
+            progress: progress,
+         }
+      }).then(() => {
+         course.value.progress = progress;
+      })
+
+      //update the current selected chapter with the new lesson done
+      const chapterIndex = chapters.value.findIndex(chapter => chapter.number == chapterNumber);
+      if(chapterIndex != -1) {
+         chapterSelected.value = chapters.value[chapterIndex];
+      }
    })
 }
 
-const nextLesson = () => {
-   const actualLessonIndex = chapterSelected.value.lessons.findIndex(lesson => lesson.number == lessonSelected.value.number);
+const nextLesson = async() => {
+   updateUserHistory(lessonSelected.value.number, chapterSelected.value.number)
 
-   updateUserHistory(lessonSelected.value.number, chapterSelected.value.number);
+   //go to the next question  
+   const actualLessonIndex = chapterSelected.value.lessons.findIndex(lesson => lesson.number == lessonSelected.value.number);
 
    let nextLesson = defaultSelectedLesson;
    if(actualLessonIndex + 1 < chapterSelected.value.lessons.length) {
@@ -107,18 +146,10 @@ const lessonSelection = (lessonNumber) => {
    }
 }
 
-const logarithmicFunction = (x) => {
-   //a function to mimic the amount of characters in the subtitle per window width size
-   const result = 30*Math.log(0.01*x-3.83)-42.6;
-   return result > 0 ? result : 0;
-}
-
-const descriptionSliced = () => {
-   //slice the description by a amount depending on the window width size;
-   const windowWidth = process.client ? window.innerWidth : 1488;
-   const descriptionSize = Math.floor(logarithmicFunction(windowWidth));
-   const ellipsis = descriptionSize >= chapterSelected.value.name.length ? '' : '...';
-   return chapterSelected.value.name.slice(0, descriptionSize) + ellipsis;
+const getMaxTitleWidth = () => {
+   const sideBarWidth = process.client ? document.getElementById('side-bar').offsetWidth : 325;
+   //maxTitleWidth is composed from the window width size - (paddings on the page (2*55px) + gap (55px) + side-bar maxwidth)
+   return process.client ? window.innerWidth - (4*55 + sideBarWidth) : 940;
 }
 </script>
 
@@ -127,7 +158,7 @@ const descriptionSliced = () => {
       <AppHeader />
 
       <div id="view-body-course">
-         <div class="side-bar">
+         <div class="side-bar" id="side-bar">
             <div class="back-and-progress">
                <NuxtLink to="/courses" class="red-font">Voltar</NuxtLink>
                <ProgressBar :progress="(course.progress / chapters.length) * 100"/>
@@ -145,11 +176,14 @@ const descriptionSliced = () => {
          <div class="chapter-view">
             <div class="chapter-text">
                <div>
-                  <div class="course-chapter-title">
-                     <h1 class="red-font" style="white-space: nowrap;">{{ course.name }}</h1>
-                     <div class="line" />
-                     <h1>{{ descriptionSliced() }}</h1>
-                  </div>
+                  <!-- Client only to avoid hidration mismatch -->
+                  <ClientOnly>
+                     <div class="course-chapter-title" :style="'max-width:'+getMaxTitleWidth()+'px'">
+                        <h1 class="red-font" style="white-space: nowrap;">{{ course.name }}</h1>
+                        <div class="line" />
+                        <h1>{{ chapterSelected.name }}</h1>
+                     </div>
+                  </ClientOnly>
                   <h2 v-if="lessonSelected.type == 'VIDEO'"> {{ chapterSelected.title }}</h2>
                   <h2 v-else>{{ lessonSelected.name }}</h2>
                </div>
