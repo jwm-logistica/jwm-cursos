@@ -16,10 +16,11 @@ export default defineEventHandler(async(event) => {
             userId: userId,
         }, 
         select : {
-            createdAt: true,
+            updatedAt: true,
             completed: true,
             lesson: {
                 select: {
+                    number: true,
                     type: true,
                     name: true,
                     durationMinutes: true,

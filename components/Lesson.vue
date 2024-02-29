@@ -15,7 +15,27 @@ watch(() => props.lesson, (newValue) => {
    active.value = newValue.active;
    show.value = newValue.show;
    completed.value = newValue.completed;
+
+   changeTextStyle();
 }, { deep: true })
+
+const textRef = ref(null);
+
+const changeTextStyle = () => {
+   if(textRef.value) {
+      if(active.value) {
+         textRef.value.classList.add('active')
+      } else {
+         textRef.value.classList.remove('active')
+      }
+   
+      if(completed.value) {
+         textRef.value.classList.add('completed')
+      } else {
+         textRef.value.classList.remove('completed')
+      }
+   }
+}
 
 const selectLesson = () => {
    emit("toggle", lesson.number);
@@ -25,13 +45,10 @@ const selectLesson = () => {
 <template>
    <transition name="fade">
       <div class="lesson" v-if="show">
-         <CircleWBaseLine :active="active"/>
+         <CircleWBaseLine :active="active" :completed="completed"/>
          <button class="lesson-button" @click="selectLesson">
             <div class="lesson-name-icon">
-               <span :style="
-                  active ? 'font-weight: bold' : '' 
-                  + completed ? 'text-decoration: line-through #e31c24; ' : ''
-               ">{{ lesson.name }}</span>
+               <span ref="textRef" :class="completed ? 'completed' : ''">{{ lesson.name }}</span>
                <Icon name="ic:baseline-ondemand-video" size="20px" class="main-icon" v-if="lesson.type == 'VIDEO'"/>
                <Icon name="mdi:file-document-edit-outline" size="20px" class="main-icon" v-if="lesson.type == 'TEST'"/>
             </div>
@@ -80,5 +97,13 @@ label {
    span {
       line-height: 17px;
    }
+}
+
+.active {
+   font-weight: bold;
+}
+
+.completed {
+   text-decoration: line-through #e31c24;
 }
 </style>

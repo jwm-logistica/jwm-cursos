@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async(event) => {
     const body = await readBody(event);
 
-    if(!body.courseId || !body.userId || !body.progress) {
+    if(!body.courseId || !body.userId) {
         console.log("Data not submitted in progress body", body)
         return createError({statusCode: 500, statusMessage: 'Server error'})
     }

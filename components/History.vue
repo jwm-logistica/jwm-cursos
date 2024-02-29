@@ -18,20 +18,20 @@ function remapHistory() {
    const historyMap = new Map();
    history.forEach((historyObj) => {
       const courseId = historyObj.lesson.chapter.course.id;
-      const date = formatDate(new Date(historyObj.createdAt));
+      const date = formatDate(new Date(historyObj.updatedAt));
       const lessonKey = `${courseId}-${date}`;
 
       if (!historyMap.has(lessonKey)) {
          historyMap.set(lessonKey, {
-            completed: historyObj.completed,
             courseId: courseId,
             course: historyObj.lesson.chapter.course.name,
             date: date,
             lessons: [],
          });
       }
-
+      
       historyMap.get(lessonKey).lessons.push({
+         completed: historyObj.completed,
          chapter: historyObj.lesson.chapter.name,
          name: historyObj.lesson.name,
          type: historyObj.lesson.type,
@@ -57,7 +57,7 @@ function remapHistory() {
             </div>
             <div class="lessons">
                <div class="lesson-done" v-for="lesson in data.lessons">
-                  <CircleWBaseLine />
+                  <CircleWBaseLine :completed="lesson.completed" />
                   <div class="chapter-lesson-name">
                      <span class="lighter chapter-name">
                         {{ lesson.chapter }}
@@ -79,6 +79,7 @@ function remapHistory() {
 <style scoped>
 .history-box {
    max-width: 430px;
+   min-width: 400px;
    width: 100%;
    padding: 25px;
    display: flex;

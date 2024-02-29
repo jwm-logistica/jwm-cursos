@@ -12,13 +12,12 @@ const emit = defineEmits(["chapterSelection", "lessonSelection"]);
 const buttonRef = ref('');
 
 //whenever a chapter is selected, all the chapters will call the function to (un)show the lessons
-watch(() => props.chapter, (newValue) => {
-   onChapterCheck(newValue.active);
+watch(() => props.chapter, (newValue, oldValue) => {
+   if (newValue.active !== oldValue.active) {
+      onChapterCheck(newValue.active);
+   }
+   lessons.value = newValue.lessons;
 }, { deep: true })
-
-// watch(() => props.chapter.lessons, (newValue) => {
-//    lessons.value = newValue;
-// }, { deep: true })
 
 let timeoutID = null;
 const onChapterCheck = show => {
@@ -58,15 +57,21 @@ const onLessonSelection = number => {
    emit("lessonSelection", number);
 };
 
-const handleClick = () => {
-   emit("chapterSelection", chapter.number);
+const handleClick = (number) => {
+   emit("chapterSelection", number);
 }
 </script>
 
 <template>
    <div class="chapter-dropdown">
-      <button ref="buttonRef" @click="handleClick" class="chapter-box bordered shadow">
+      <button 
+         ref="buttonRef"
+         @click="() => handleClick(chapter.number)" 
+         class="chapter-box bordered shadow"
+         :style="chapter.completed ? 'justify-content: space-between' : ''"
+      >
          <span>{{ chapter.name }}</span>
+         <Icon name="ic:outline-check" v-if="chapter.completed"/>
       </button>
 
       <div class="lessons">
@@ -100,5 +105,13 @@ const handleClick = () => {
 
 .lessons {
    width: 100%;
+}
+
+.icon {
+   min-width: 24px;
+   min-height: 24px;
+}
+.icon > :not(svg) {
+   color: #e31c24 !important;
 }
 </style>

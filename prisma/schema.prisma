@@ -64,7 +64,7 @@ model LessonsHistory {
   lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
   chapterNumber Int
-  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, lessonNumber])
   @@unique([userId, lessonNumber])

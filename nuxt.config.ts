@@ -5,5 +5,5 @@ export default defineNuxtConfig({
     globalAppMiddleware: true
    },
 	css: ['~/assets/css/main.css'],
-  devtools: { enabled: true }
+  devtools: { enabled: true },
 })

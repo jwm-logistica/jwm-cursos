@@ -1,13 +1,15 @@
 <script setup>
 const props = defineProps({
-   active: Boolean
+   active: Boolean,
+   completed: Boolean
 });
 </script>
 
 <template>
    <div class="circle-base-line">
       <div class="base-line" />
-      <div ref="circleRef" class="border-circle" :style="active ? 'border: 2px solid #414141;' : ''" />
+      <div v-if="!completed" ref="circleRef" class="border-circle" :style="active ? 'border: 2px solid #414141;' : ''" />
+      <Icon v-else name="ic:outline-check" size="18px"/>
    </div>
 </template>
 
@@ -32,5 +34,9 @@ const props = defineProps({
    width: 1px;
    background-color: #dbdbdb;
    height: 15px;
+}
+
+.icon > :not(svg) {
+   color: #e31c24 !important;
 }
 </style>

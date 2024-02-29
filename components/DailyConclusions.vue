@@ -18,7 +18,7 @@ const weekDays = [
 let highestValue = 0;
 history.forEach(hist => {
    if(hist.completed) {
-      const index = new Date(hist.createdAt).getDay();
+      const index = new Date(hist.updatedAt).getDay();
       weekDays[index].value++;
       highestValue = weekDays[index].value > highestValue ? weekDays[index].value : highestValue;
       
