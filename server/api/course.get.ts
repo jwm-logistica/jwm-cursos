@@ -45,6 +45,7 @@ export default defineEventHandler(async(event) => {
             userId: res.userId,
             progress: res.progress,
             name: res.courses.name,
+            average: res.average,
         }
     
         return { course };

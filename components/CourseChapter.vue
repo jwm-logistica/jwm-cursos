@@ -5,6 +5,7 @@ const props = defineProps({
 
 const { chapter } = props;
 
+const completed = toRef(chapter.completed);
 const lessons = toRef(chapter.lessons);
 
 const emit = defineEmits(["chapterSelection", "lessonSelection"]);
@@ -16,6 +17,7 @@ watch(() => props.chapter, (newValue, oldValue) => {
    if (newValue.active !== oldValue.active) {
       onChapterCheck(newValue.active);
    }
+   completed.value = newValue.completed;
    lessons.value = newValue.lessons;
 }, { deep: true })
 
@@ -71,7 +73,9 @@ const handleClick = (number) => {
          :style="chapter.completed ? 'justify-content: space-between' : ''"
       >
          <span>{{ chapter.name }}</span>
-         <Icon name="ic:outline-check" v-if="chapter.completed"/>
+         <Transition name="icon-appear" appear>
+            <Icon name="ic:outline-check" v-show="completed"/>
+         </Transition>
       </button>
 
       <div class="lessons">
@@ -113,5 +117,13 @@ const handleClick = (number) => {
 }
 .icon > :not(svg) {
    color: #e31c24 !important;
+}
+
+.icon-appear-enter-from {
+   transform: scale(0);
+}
+
+.icon-appear-enter-active {
+   transition: all 0.5s ease;
 }
 </style>

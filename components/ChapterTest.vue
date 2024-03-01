@@ -23,6 +23,12 @@ const questions = ref(questionsFromLesson.questions?.map((question) => {
 const submitButton = ref("");
 const backButton = ref('');
 const currentAlternative = ref({});
+const results = ref({
+   finished: false,
+   correct: 0,
+   total: questions.value.length,
+   percentage: 0,
+})
 const bodyAdditionalStyle = ref("");
 
 const changeButtonStyle = (buttonRef, bgColor, color, cursor, disabled=false) => {
@@ -36,21 +42,103 @@ const onChange = (alternative) => {
    changeButtonStyle(submitButton, "#e31c24", "#fbfbfb", "pointer", false);
 
    currentAlternative.value = alternative;
+
+   //reset all alternatives selected properties to false excepts for the new selected
+   questions.value[currentIndex.value].alternatives = questions.value[currentIndex.value].alternatives.map(alt => {
+      return {
+         ...alt,
+         selected: alt.index === currentAlternative.value?.index,
+      }
+   })
 };
 
-const submitResults = async() => {
-   const results = await $fetch('/api/results', {
+const updateResults = async() => {
+   const amountOfQuestions = questions.value.length;
+
+   let correctAnswersCount = 0;
+   questions.value.forEach(question => {
+      question.alternatives.forEach(alt => {
+         if(alt.selected && alt.correctAnswer) {
+            correctAnswersCount+=1;
+         }
+      })
+   })
+
+   results.value = {
+      finished: true,
+      correct: correctAnswersCount, 
+      total: amountOfQuestions, 
+      percentage: ((correctAnswersCount/amountOfQuestions)*100).toFixed(1)
+   };
+
+   //get all the test results for the course and update courseOnUsers average
+   const courseId = route.params.id;
+   const { testResultsByCourse } = await $fetch('/api/results-by-course', { 
+      params: { 
+         userId: +route.query.userId, 
+         courseId: +courseId
+      }
+   });
+
+   //making sure that the results are upToDate with the current test result
+   let testResultFound = false
+   let mappedResultsByCourse = []
+   mappedResultsByCourse = testResultsByCourse.map((result) => {
+      if(result.lessonNumber == lessonNumber) {
+         testResultFound = true;
+         //found the corresponding test
+
+         return {
+            ...result,
+            correctAnswers: correctAnswersCount
+         }
+      } else {
+         return result
+      }
+   })
+
+   if(!testResultFound) {
+      //case it this test was not done yet
+      mappedResultsByCourse.push({
+         correctAnswers: correctAnswersCount,
+         questionsAmount: amountOfQuestions,
+      })
+   }
+
+   const { data } = useNuxtData('user-course-chapters');
+   const chapters = data.value.chapters;
+   
+   let totalAmountOfTests = 0;
+   chapters.forEach(chapter => {
+      const testsAmount = chapter.lessons.reduce((a, c) => c.type == 'TEST' ? a+1 : a+0, 0);
+      totalAmountOfTests += testsAmount;
+   })
+
+   const sum = mappedResultsByCourse.reduce((acc, current) => acc + (current.correctAnswers / current.questionsAmount), 0);
+   const average = Math.ceil((sum / totalAmountOfTests)*100);
+
+   await $fetch('/api/progress', {
+      method: 'PUT',
+      body: {
+         userId: +route.query.userId,
+         courseId: +courseId,
+         average: average,
+         progress: null, //progress will not be changed
+      }
+   })
+
+   await $fetch('/api/results', {
       method: 'POST',
       body: {
          userId: +route.query.userId,
          lessonNumber: lessonNumber,
          chapterNumber: chapterNumber,
-         correctAnswers: getResults().correct,
+         correctAnswers: correctAnswersCount,
       }
    })
 
    //update user history
-   const history = await $fetch('/api/history', {
+   await $fetch('/api/history', {
       method: 'POST',
       body: {
          userId: +route.query.userId,
@@ -69,8 +157,8 @@ const onSubmit = (forward=true) => {
       }
       //if the user finished the test, then change the body style and show the results
       bodyAdditionalStyle.value = "opacity: 20%; cursor: default; pointer-events: none;"
-      submitResults();
-   } else if(!forward && currentIndex.value == questions.value.length -1 && bodyAdditionalStyle.value != '') {
+      updateResults();
+   } else if(!forward && currentIndex.value == questions.value.length -1 && results.value.finished) {
       //if the user finished the test but pressed retry then resets everything
       questions.value = questions.value.map((question) => {
          return {
@@ -102,14 +190,6 @@ const onSubmit = (forward=true) => {
    } else {
       bodyAdditionalStyle.value = "";
    }
-
-   //reset all alternatives selected properties to false excepts for the new selected
-   questions.value[currentIndex.value].alternatives = questions.value[currentIndex.value].alternatives.map(alt => {
-      return {
-         ...alt,
-         selected: alt.index === currentAlternative.value?.index,
-      }
-   })
 
    if(forward && currentIndex.value < questions.value.length - 1) {
       //moving to the next question
@@ -144,25 +224,6 @@ const onSubmit = (forward=true) => {
       alts.forEach(alt => alt.checked = false);
    }
 }
-
-const getResults = () => {
-   const amountOfQuestions = questions.value.length;
-
-   let correctAnswersCount = 0;
-   questions.value.forEach(question => {
-      question.alternatives.forEach(alt => {
-         if(alt.selected && alt.correctAnswer) {
-            correctAnswersCount+=1;
-         }
-      })
-   })
-
-   return {
-      correct: correctAnswersCount, 
-      total: amountOfQuestions, 
-      percentage: ((correctAnswersCount/amountOfQuestions)*100).toFixed(1)
-   };
-}
 </script>
 
 <template>
@@ -176,15 +237,15 @@ const getResults = () => {
             </label>
          </div>
       </div>
-      <h2 v-if="bodyAdditionalStyle != ''">Resultados</h2>
-      <p v-if="bodyAdditionalStyle != ''">{{ getResults().percentage >= 75 ? 'Parabéns' : 'Continue praticando' }}, você acertou {{ getResults().correct }} das {{ getResults().total }} questões do teste ({{ getResults().percentage }}%)</p>
+      <h2 v-if="results.finished">Resultados</h2>
+      <p v-if="results.finished">{{ results.percentage >= 75 ? 'Parabéns' : 'Continue praticando' }}, você acertou {{ results.correct }} das {{ results.total }} questões do teste ({{ results.percentage }}%)</p>
       <div class="button-box">
          <button 
             ref="backButton" 
             disabled="true" 
             @click="() => onSubmit(false)"
          >
-            {{ bodyAdditionalStyle != '' ? "REPETIR TESTE" : "VOLTAR"}}
+            {{ results.finished ? "REPETIR TESTE" : "VOLTAR"}}
          </button>
          <button
             class="submit-button button-main"
@@ -226,6 +287,12 @@ label {
    gap: 14px;
    cursor: pointer;
    padding: 14px;
+   transition: all 0.5s ease;
+}
+
+label:active {
+   transform-origin: center;
+   transform: scale(1.005);
 }
 
 input {

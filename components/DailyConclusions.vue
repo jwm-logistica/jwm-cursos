@@ -6,13 +6,13 @@ const props = defineProps({
 const { history } = props;
 
 const weekDays = [
-   { name: "Dom", value: 0, percentage: 100 },
-   { name: "Seg", value: 0, percentage: 100 },
-   { name: "Ter", value: 0, percentage: 100 },
-   { name: "Qua", value: 0, percentage: 100 },
-   { name: "Qui", value: 0, percentage: 100 },
-   { name: "Sex", value: 0, percentage: 100 },
-   { name: "Sab", value: 0, percentage: 100 },
+   { name: "Dom", value: 0, percentage: 0 },
+   { name: "Seg", value: 0, percentage: 0 },
+   { name: "Ter", value: 0, percentage: 0 },
+   { name: "Qua", value: 0, percentage: 0 },
+   { name: "Qui", value: 0, percentage: 0 },
+   { name: "Sex", value: 0, percentage: 0 },
+   { name: "Sab", value: 0, percentage: 0 },
 ];
 
 let highestValue = 0;

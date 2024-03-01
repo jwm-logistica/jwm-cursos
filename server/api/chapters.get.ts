@@ -14,11 +14,18 @@ export default defineEventHandler(async(event) => {
         where: {
             courseId: id,
         }, 
+        orderBy: {
+            number: 'asc'
+        },
         include: {
             _count: {
                 select: { lessons: true }
             },
-            lessons: true
+            lessons: {
+                orderBy: {
+                    number: 'asc'
+                },
+            }
         }
     }).catch(e => {
         error = e;

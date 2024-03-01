@@ -14,6 +14,9 @@ export default defineEventHandler(async(event) => {
         where: {
             userId: id,
         }, 
+        orderBy: {
+            courseId: 'desc'
+        },
         include: {
             courses: {
                 include: {
@@ -42,7 +45,7 @@ export default defineEventHandler(async(event) => {
             chaptersAmount: r.courses._count.chapters,
             progress: r.progress,
             assignedAt: r.assignedAt,
-
+            average: r.average
         }));
     
         return { courses };

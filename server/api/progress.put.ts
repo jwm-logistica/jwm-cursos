@@ -10,6 +10,22 @@ export default defineEventHandler(async(event) => {
     }
 
     let error = null;
+    
+    let data = {}
+    if(body.progress && body.average) {
+        data = {
+            progress: body.progress,
+            average: body.average,
+        }
+    } else if(body.progress) {
+        data = {
+            progress: body.progress,
+        }
+    } else if(body.average) {
+        data = {
+            average: body.average
+        }
+    }
 
     const res = await prisma.coursesOnUsers.update({
         where: {
@@ -18,9 +34,7 @@ export default defineEventHandler(async(event) => {
                 userId: body.userId,
             }
         },
-        data: {
-            progress: body.progress,
-        }
+        data: data,
     }).catch(e => {
         error = e;
     })

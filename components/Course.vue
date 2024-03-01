@@ -6,7 +6,10 @@
 <template>
    <NuxtLink :to="'/courses/'+course.id+'?userId='+encodeURIComponent(course.userId)">
       <div class="course-box shadow bordered">
-         <NuxtImg class="course-image" :src="course.imageUrl" height="70" :alt="'Logo do curso'+course.name" v-if="course.imageUrl"/>
+         <div class="image-icon">
+            <NuxtImg class="course-image" :src="course.imageUrl" height="70" :alt="'Logo do curso'+course.name" v-if="course.imageUrl"/>
+            <Icon name="mingcute:certificate-2-line" size="36px" :color="course.average >= 75 ? '#e31c24' : '#c4c4c4'"/>
+         </div>
 
          <div class="course-name-description">
             <h2>{{course.name}}</h2>
@@ -37,6 +40,11 @@
    p {
       font-weight: lighter;
    }
+}
+
+.image-icon {
+   display: flex;
+   justify-content: space-between;
 }
 
 .course-image {

@@ -23,8 +23,15 @@ export default defineEventHandler(async(event) => {
                 select: { questions: true }
             },
             questions: {
+                orderBy: {
+                    number: 'asc'
+                },
                 include: {
-                    alternatives: true,
+                    alternatives: {
+                        orderBy: {
+                            number: 'asc'
+                        },
+                    },
                 }
             },
         }

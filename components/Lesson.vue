@@ -87,6 +87,11 @@ label {
    border-radius: 5px;
    padding: 4px 10px;
    transform: translateY(5px);
+   transform-origin: center;
+}
+
+.lesson-button:active {
+   transform: translate(5px, 5px);
 }
 
 .lesson-name-icon {

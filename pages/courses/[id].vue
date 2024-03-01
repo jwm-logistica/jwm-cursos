@@ -98,6 +98,9 @@ const updateUserHistory = async(lessonNumber, chapterNumber) => {
          chapters.value.forEach(chapter => {
             if(completedChapter(chapter.lessons, lessonNumber)) {
                progress++;
+
+               //update client side
+               chapter.completed = true;
             }
          })
    
@@ -107,16 +110,11 @@ const updateUserHistory = async(lessonNumber, chapterNumber) => {
                userId: parseInt(userId),
                courseId: course.value.id,
                progress: progress,
+               average: null,
             }
          }).then(() => {
             course.value.progress = progress;
          })
-   
-         //update the current selected chapter with the new lesson done
-         const chapterIndex = chapters.value.findIndex(chapter => chapter.number == chapterNumber);
-         if(chapterIndex != -1) {
-            chapterSelected.value = chapters.value[chapterIndex];
-         }
 
          alreadyUpdated = true;
       })
@@ -135,10 +133,10 @@ const nextLesson = async() => {
       nextLesson = chapterSelected.value.lessons[actualLessonIndex+1];
       lessonSelection(nextLesson.number);
    } else {  
-      const actualChapterIndex = chapters.value.findIndex(chapter => chapter.number == chapterSelected.value.number);
-      if(actualChapterIndex + 1 < chapters.value.length) {
+      const currentChapterIndex = chapters.value.findIndex(chapter => chapter.number == chapterSelected.value.number);
+      if(currentChapterIndex + 1 < chapters.value.length) {
          //the next lesson is from the next chapter
-         const nextChapter = chapters.value[actualChapterIndex+1];
+         const nextChapter = chapters.value[currentChapterIndex+1];
          chapterSelection(nextChapter.number);
 
          lessonSelection(null);
@@ -195,7 +193,6 @@ const onVideoProgress = (data) => {
             </div>
             <CourseChapter
                v-for="chapter in chapters"
-               :key="chapter.number"
                :chapter="chapter"
                @chapterSelection="number => chapterSelection(number)"
                @lessonSelection="number => lessonSelection(number)"
