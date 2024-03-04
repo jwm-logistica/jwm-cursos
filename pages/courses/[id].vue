@@ -78,51 +78,51 @@ const chapterSelection = (chapterNumber) => {
    lessonSelected.value = defaultSelectedLesson;
 };
 
+const updateUserHistory = async(lessonNumber, chapterNumber) => {
+   await $fetch('/api/history', {
+      method: 'POST',
+      body: {
+         userId: parseInt(userId),
+         lessonNumber: lessonNumber,
+         chapterNumber: chapterNumber,
+         completed: true,
+      }
+   }).then(async() => {
+      //updating lesson completion and progress client side
+      let progress = 0;
+      chapters.value.forEach(chapter => {
+         if(completedChapter(chapter.lessons, lessonNumber)) {
+            progress++;
+
+            //update client side
+            chapter.completed = true;
+         }
+      })
+
+      await $fetch('/api/progress', {
+         method: 'PUT',
+         body: {
+            userId: parseInt(userId),
+            courseId: course.value.id,
+            progress: progress,
+            average: null,
+         }
+      }).then(() => {
+         course.value.progress = progress;
+      })
+   })
+}
+
 let alreadyUpdated = false;
 
-const updateUserHistory = async(lessonNumber, chapterNumber) => {
+const nextLesson = async() => {
    //if the user history was already called by the video percentage or test finish, so the update will not happen
    //this is to avoid multiple calls by the video ending and when user finishes the test and press the finish button (nextLesson call) again
    if(!alreadyUpdated) {
-      await $fetch('/api/history', {
-         method: 'POST',
-         body: {
-            userId: parseInt(userId),
-            lessonNumber: lessonNumber,
-            chapterNumber: chapterNumber,
-            completed: true,
-         }
-      }).then(async() => {
-         //updating lesson completion and progress client side
-         let progress = 0;
-         chapters.value.forEach(chapter => {
-            if(completedChapter(chapter.lessons, lessonNumber)) {
-               progress++;
-
-               //update client side
-               chapter.completed = true;
-            }
-         })
-   
-         await $fetch('/api/progress', {
-            method: 'PUT',
-            body: {
-               userId: parseInt(userId),
-               courseId: course.value.id,
-               progress: progress,
-               average: null,
-            }
-         }).then(() => {
-            course.value.progress = progress;
-         })
-
-         alreadyUpdated = true;
-      })
+      updateUserHistory(lessonSelected.value.number, chapterSelected.value.number)
    }
-}
 
-const nextLesson = async() => {
-   updateUserHistory(lessonSelected.value.number, chapterSelected.value.number)
+   alreadyUpdated = false;
 
    //go to the next question  
    const actualLessonIndex = chapterSelected.value.lessons.findIndex(lesson => lesson.number == lessonSelected.value.number);

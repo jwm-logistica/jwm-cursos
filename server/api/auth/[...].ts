@@ -40,21 +40,15 @@ export default NuxtAuthHandler({
             name: "Credentials",
             async authorize(credentials: Credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    throw createError({
-                      statusCode: 500,
-                      statusMessage: 'Missing Info'
-                    })
-                  }
+                    //missing info
+                }
 
                 const user = await GetUser(credentials?.email);
 
                 //email incorrect
                 if (!user || !user.password) {
-                    throw createError({
-                      statusCode: 401,
-                      statusMessage: 'Invalid Credentials'
-                    })
-                  }
+                    //incorrect email
+                }
 
                 const correctPassword = await bcrypt.compare(
                     credentials.password,
@@ -68,7 +62,7 @@ export default NuxtAuthHandler({
                         image: user.imageUrl
                     }
                 } else {
-                    //wrong password
+                    //incorrect password
                 }
             }
         })

@@ -54,3 +54,20 @@ input,
 a {
    width: 100%;
 }
+
+.error {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+   padding: 30px 40px;
+   border-top-left-radius: 10px;
+   border-top-right-radius: 10px;
+   align-items: center;
+   background-color: #ffffff;
+   position: absolute;
+   bottom: 0;
+
+   p {
+      font-weight: 500;
+   }
+}

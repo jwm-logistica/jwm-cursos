@@ -99,6 +99,7 @@ const handleClick = (number) => {
    display: flex;
    background-color: #fbfbfb;
    align-items: center;
+   justify-content: space-between;
    text-align: start;
    padding: 20px;
    width: 100%;

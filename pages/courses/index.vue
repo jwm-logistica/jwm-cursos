@@ -1,5 +1,8 @@
 <script setup>
-   const { data } = useAuth();
+   const { signOut, data } = useAuth();
+   if(!data.value.user.email) {
+      await signOut({ callbackUrl: '/' });
+   }
    const id = +data.value.user.email.split("-")[0];
 
    const { courses } = await $fetch(`/api/courses?id=${encodeURIComponent(id)}`);
