@@ -10,7 +10,9 @@ async function handleSignOut() {
 
 <template>
    <div class="header-box">
-      <img src="/logo.png" height="80" alt="Logo da empresa JWM Soluções Logísticas" />
+      <a href="http://192.168.0.8/wordpress/" target="_blank">
+         <img src="/logo.png" height="80" alt="Logo da empresa JWM Soluções Logísticas" />
+      </a>
       <div class="user-box">
          <div>
             <h2>{{ data.user.name }}</h2>
