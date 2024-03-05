@@ -78,13 +78,12 @@ const chapterSelection = (chapterNumber) => {
    lessonSelected.value = defaultSelectedLesson;
 };
 
-const updateUserHistory = async(lessonNumber, chapterNumber) => {
+const updateUserHistory = async(lessonNumber) => {
    await $fetch('/api/history', {
       method: 'POST',
       body: {
          userId: parseInt(userId),
          lessonNumber: lessonNumber,
-         chapterNumber: chapterNumber,
          completed: true,
       }
    }).then(async() => {
@@ -119,7 +118,7 @@ const nextLesson = async() => {
    //if the user history was already called by the video percentage or test finish, so the update will not happen
    //this is to avoid multiple calls by the video ending and when user finishes the test and press the finish button (nextLesson call) again
    if(!alreadyUpdated) {
-      updateUserHistory(lessonSelected.value.number, chapterSelected.value.number)
+      updateUserHistory(lessonSelected.value.number)
    }
 
    alreadyUpdated = false;
@@ -236,7 +235,6 @@ const onVideoProgress = (data) => {
             <ChapterTest 
                v-if="!pending && !(lessonSelected.type == 'VIDEO')"
                :lessonNumber="+lessonSelected.number"
-               :chapterNumber="+chapterSelected.number"
                @nextLesson="nextLesson"
             />
          </div>

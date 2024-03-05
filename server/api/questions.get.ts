@@ -2,21 +2,17 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async(event) => {
-    const id = parseInt(getQuery(event)?.id as string);
-    const chapterNumber = parseInt(getQuery(event)?.chapterNumber as string);
+    const lessonNumber = parseInt(getQuery(event)?.lessonNumber as string);
 
-    if(!id || !chapterNumber) {
-        console.log("IDs not submited in URI")
+    if(!lessonNumber) {
+        console.log("ID not submited in URI")
     }
 
     let error = null;
 
     const res = await prisma.lessons.findUnique({
         where: {
-            number_chapterNumber: {
-                number: id,
-                chapterNumber: chapterNumber,
-            },
+            number: lessonNumber,
         }, 
         include: {
             _count: {

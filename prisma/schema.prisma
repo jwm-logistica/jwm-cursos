@@ -46,25 +46,21 @@ model CoursesOnUsers {
 }
 
 model Chapters {
-  number Int @default(autoincrement())
+  number Int @id @unique @default(autoincrement())
   name String @db.VarChar(100)
   title String
   description String? @db.MediumText
   course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int
   lessons Lessons[]
-
-  @@id([number, courseId])
-  @@unique([number, courseId])
 }
 
 model LessonsHistory {
   completed Boolean @default(false)
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
-  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
+  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
-  chapterNumber Int
   updatedAt DateTime @updatedAt
 
   @@id([userId, lessonNumber])
@@ -72,20 +68,16 @@ model LessonsHistory {
 }
 
 model Lessons {
-  number Int @default(autoincrement())
+  number Int @id @unique @default(autoincrement())
   name String @db.VarChar(100)
   type LessonType @default(VIDEO)
   durationMinutes Int?
   videoUrl String?
-  chapter Chapters @relation(fields: [chapterNumber, courseId], references: [number, courseId], onDelete: Cascade, onUpdate: Cascade)
+  chapter Chapters @relation(fields: [chapterNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   chapterNumber Int
-  courseId Int
   questions Questions[]
   lessonsHistory LessonsHistory[]
   testsResults TestsResults[]
-
-  @@id([number, chapterNumber])
-  @@unique([number, chapterNumber])
 }
 
 enum LessonType {
@@ -94,36 +86,27 @@ enum LessonType {
 }
 
 model Questions { 
-  number Int @default(autoincrement())
+  number Int @id @unique @default(autoincrement())
   text String @db.MediumText
   alternatives Alternatives []
-  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
+  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
-  chapterNumber Int
-
-  @@id([number, lessonNumber])
-  @@unique([number, lessonNumber])
 }
 
 model Alternatives {
-  number Int @default(autoincrement())
+  number Int @id @unique @default(autoincrement())
   text String @db.Text
   correctAnswer Boolean
-  question Questions @relation(fields: [questionNumber, lessonNumber], references: [number, lessonNumber], onDelete: Cascade, onUpdate: Cascade)
+  question Questions @relation(fields: [questionNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   questionNumber Int
-  lessonNumber Int
-
-  @@id([number, questionNumber])
-  @@unique([number, questionNumber])
 }
 
 model TestsResults {
   correctAnswers Int
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
-  lesson Lessons @relation(fields: [lessonNumber, chapterNumber], references: [number, chapterNumber], onDelete: Cascade, onUpdate: Cascade)
+  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
-  chapterNumber Int
 
   @@id([userId, lessonNumber])
   @@unique([userId, lessonNumber])

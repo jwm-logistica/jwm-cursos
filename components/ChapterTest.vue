@@ -1,10 +1,10 @@
 <script setup>
 const route = useRoute();
-const { lessonNumber, chapterNumber } = defineProps(["lessonNumber", "chapterNumber"]);
+const { lessonNumber } = defineProps(["lessonNumber"]);
 const emit = defineEmits(["nextLesson"]);
 
 const currentIndex = ref(0);
-const { questionsFromLesson } = await $fetch('/api/questions', { params: { id: lessonNumber, chapterNumber: chapterNumber } }).catch(e=> console.log(e))
+const { questionsFromLesson } = await $fetch('/api/questions', { params: { lessonNumber: lessonNumber } }).catch(e=> console.log(e))
 
 const questions = ref(questionsFromLesson.questions?.map((question) => {
    const alternatives = question.alternatives?.map((alt, index) => {
@@ -132,7 +132,6 @@ const updateResults = async() => {
       body: {
          userId: +route.query.userId,
          lessonNumber: lessonNumber,
-         chapterNumber: chapterNumber,
          correctAnswers: correctAnswersCount,
       }
    })
@@ -143,7 +142,6 @@ const updateResults = async() => {
       body: {
          userId: +route.query.userId,
          lessonNumber: lessonNumber,
-         chapterNumber: chapterNumber,
          completed: true,
       }
    })
@@ -264,6 +262,7 @@ const onSubmit = (forward=true) => {
    display: flex;
    flex-direction: column;
    align-items: flex-start;
+   width: 100%;
    gap: 18px;
    margin-top: 15px;
 }
@@ -273,7 +272,9 @@ const onSubmit = (forward=true) => {
    flex-direction: column;
    align-items: flex-start;
    gap: 18px;
+   width: 100%;
 }
+
 .alternative-box {
    display: flex;
    align-items: center;
