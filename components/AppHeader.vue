@@ -21,7 +21,7 @@ async function handleSignOut() {
          <div class="user-profile">
             <label @change="isChecked = !isChecked">
                <input type="checkbox">
-               <NuxtImg :src="data.user.image ? data.user.image : '/user.png'" class="user-img" width="100%"/>
+               <NuxtImg :src="data.user.image ? data.user.image : '/user.jpg'" class="user-img" width="100%"/>
             </label>
             <Transition name="fade">
                <button v-if="isChecked" class="button-inverted" @click="handleSignOut">

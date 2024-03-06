@@ -15,7 +15,7 @@ model Users {
   email String  @unique
   name  String @db.VarChar(100)
   password String
-  imageUrl String
+  imageUrl String?
   lessonsHistory LessonsHistory[]
   courses CoursesOnUsers[]
   testsResults TestsResults[]
