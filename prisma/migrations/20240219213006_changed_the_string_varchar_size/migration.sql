@@ -35,4 +35,4 @@ ALTER TABLE `questions` MODIFY `text` MEDIUMTEXT NOT NULL;
 ALTER TABLE `users` MODIFY `name` VARCHAR(100) NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE `LessonsHistory` ADD CONSTRAINT `LessonsHistory_lessonType_lessonName_lessonDuration_fkey` FOREIGN KEY (`lessonType`, `lessonName`, `lessonDuration`) REFERENCES `Lessons`(`type`, `name`, `durationMinutes`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `lessonshistory` ADD CONSTRAINT `LessonsHistory_lessonType_lessonName_lessonDuration_fkey` FOREIGN KEY (`lessonType`, `lessonName`, `lessonDuration`) REFERENCES `Lessons`(`type`, `name`, `durationMinutes`) ON DELETE RESTRICT ON UPDATE CASCADE;
