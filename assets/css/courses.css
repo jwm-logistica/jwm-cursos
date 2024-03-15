@@ -30,3 +30,18 @@
    flex-direction: column;
    gap: 30px;
 }
+
+.sidebar-button {
+   width: 40px;
+   height: 40px;
+   position: fixed;
+   top: 300px;
+   border-radius: 10px;
+   background-color: red;
+}
+
+@media screen and (max-width: 800px) {
+   .statistics-box {
+      position: absolute;  
+   }
+}

@@ -8,6 +8,11 @@
    background-color: #f2f2f2;
 }
 
+img {
+   width: 25vh;
+   max-width: 200px;
+}
+
 .login-box {
    border-radius: 25px;
    padding: 40px 55px;
@@ -16,8 +21,10 @@
    justify-content: space-between;
    align-items: center;
    height: 72vh;
+   min-height: 500px;
    max-height: 700px;
    width: 42vw;
+   min-width: 360px;
    max-width: 550px;
    background-color: #ffffff;
 }
@@ -69,5 +76,45 @@ a {
 
    p {
       font-weight: 500;
+   }
+}
+
+@media screen and (min-height: 850px) {
+   .login-box {
+      max-height: 550px;
+      padding: 40px 40px;
+      min-width: 400px;
+   }
+
+   img {
+      width: 20vh;
+   }
+}
+
+@media screen and (min-height: 900px) and (min-width: 900px) {
+   .login-box {
+      height: 40vh;
+      width: 50vw;
+      max-width: 700px;
+      max-height: 900px;
+   }
+}
+
+@media screen and (max-height: 500px) {
+   .login-box {
+      height: 100vh;
+      max-height: 100vh;
+   }
+}
+
+@media screen and (max-width: 300px) {
+   .login-box {
+      width: 100vw;
+      padding-left: 60px;
+      padding-right: 60px;
+   }
+
+   img {
+      max-width: 140px;
    }
 }

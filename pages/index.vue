@@ -28,7 +28,7 @@ const handleSignIn = (email, password) => {
    <div id="inner-body-login">
       <div class="shadow login-box">
          <div class="login-head">
-            <img src="/logo.png" width="200" />
+            <img src="/logo.png" />
             <div class="title-box">
                <h1 class="red-font">CURSOS</h1>
                <div class="line" />

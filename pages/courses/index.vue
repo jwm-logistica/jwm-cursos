@@ -5,13 +5,25 @@
    }
    const id = +data.value.user.email.split("-")[0];
 
+   const statisticsIsSidebar = ref(false);
+   const showStatistics = ref(false);
+
    const { courses } = await $fetch(`/api/courses?id=${encodeURIComponent(id)}`);
    const { history } = await $fetch(`/api/history?userId=${encodeURIComponent(id)}`)
    
    const getCoursesMatrix = () => {
-      const coursesMatrix = [];
       //mansory layout
-      const statisticsBoxWidth = process.client ? document.getElementById('statistics-box').offsetWidth : 430;
+      const coursesMatrix = [];
+
+      let statisticsBoxWidth = 430;
+      if(process.client) {
+         if(statisticsIsSidebar) {
+            //the statistics will not occupy any space
+            statisticsBoxWidth = 0;
+         } else {
+            statisticsBoxWidth = document.getElementById('statistics-box').offsetWidth;
+         }
+      }
       
       const coursesBoxWidth = process.client ? window.innerWidth - (statisticsBoxWidth + 30 + 2*55) : 870; 
       //size of the client window - (size of the history + gap + page padding)
@@ -35,6 +47,15 @@
 
       return coursesMatrix;
    }
+
+   const statisticsBoxResponsivness = () => {
+      const minWindowWidth = 800;
+      if(window.innerWidth <= minWindowWidth) {
+         statisticsIsSidebar.value = true;
+      }
+   } 
+
+   process.client ? statisticsBoxResponsivness() : null;
 </script>
 
 <template>
@@ -54,10 +75,13 @@
             </ClientOnly>
          </div>
 
-         <div class="statistics-box" id="statistics-box">
-            <DailyConclusions :history="history" />
-            <History :history="history" />
-         </div>
+         <Transition name="side-right" appear>
+            <div class="statistics-box" id="statistics-box" v-show="showStatistics">
+               <DailyConclusions :history="history" />
+               <History :history="history" />
+            </div>
+         </Transition>
+         <button class="sidebar-button shadow" @click="() => showStatistics = !showStatistics"/>
       </div>
    </div>
 </template>

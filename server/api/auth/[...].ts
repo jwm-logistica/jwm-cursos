@@ -39,30 +39,23 @@ export default NuxtAuthHandler({
         CredentialsProvider.default({
             name: "Credentials",
             async authorize(credentials: Credentials) {
-                if (!credentials?.email || !credentials?.password) {
-                    //missing info
-                }
-
-                const user = await GetUser(credentials?.email);
-
-                //email incorrect
-                if (!user || !user.password) {
-                    //incorrect email
-                }
-
-                const correctPassword = await bcrypt.compare(
-                    credentials.password,
-                    user.password
-                )
-
-                if(correctPassword) {
-                    return {
-                        name: user.name,
-                        email: user.id + '-' + user.email, //cheese way to get the user id without using local credentials
-                        image: user.imageUrl
+                try {
+                    const user = await GetUser(credentials?.email);
+    
+                    const correctPassword = await bcrypt.compare(
+                        credentials.password,
+                        user.password
+                    )
+    
+                    if(correctPassword) {
+                        return {
+                            name: user.name,
+                            email: user.id + '-' + user.email, //cheese way to get the user id without using local credentials
+                            image: user.imageUrl
+                        }
                     }
-                } else {
-                    //incorrect password
+                } catch(err) {
+                    console.log(err)
                 }
             }
         })
