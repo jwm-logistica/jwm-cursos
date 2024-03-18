@@ -31,17 +31,96 @@
    gap: 30px;
 }
 
-.sidebar-button {
-   width: 40px;
-   height: 40px;
+.sidebar-button-label {
+   right: 0px;
    position: fixed;
-   top: 300px;
-   border-radius: 10px;
-   background-color: red;
+   display: flex;
+   z-index: 1;
 }
 
-@media screen and (max-width: 800px) {
-   .statistics-box {
-      position: absolute;  
+#sidebar-input {
+   display: none;
+}
+
+.icon-div {
+   padding: 10px;
+   display: flex;
+   border-radius: 10px 0px 0px 10px;
+   background-color: red;
+   flex-direction: column;
+   justify-content: space-between;
+   cursor: pointer;
+}
+
+.arrow-icon {
+   transform: rotate(90deg);
+   transition: all 0.75s ease;
+}
+
+.sidebar {
+   z-index: 0;
+}
+
+#sidebar-input:checked + .sidebar-button-label > .icon-div > .arrow-icon {
+   transform: rotate(-90deg);
+}
+
+#sidebar-input:checked + .sidebar-button-label + .sidebar {
+   visibility: visible;
+   transform: translateX(0);
+}
+
+/* mobile styles */
+@media screen and (max-width: 884px) {
+   #masonry-layout-courses {
+      gap: 0px;
+   }
+
+   .sidebar {
+      visibility: hidden;
+      position: fixed;
+      width: 500px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      transition: all 0.5s ease;
+      justify-content: center;
+      background-color: white;
+      gap: 20px;
+   }
+
+   .sidebar-button-label {
+      display: block;
+   }
+
+   .sidebar > .user-box {
+      display: flex;
+   }
+}
+
+@media screen and (max-width: 555px) {
+   .sidebar {
+      width: 100vw;
+   }
+
+   
+}
+
+/* computer styles */
+@media screen and (min-width: 885px) {
+   .sidebar {
+      visibility: visible;
+   }
+
+   .sidebar-button-label {
+      display: none;
+   }
+
+   .sidebar > .user-box {
+      display: none;
    }
 }

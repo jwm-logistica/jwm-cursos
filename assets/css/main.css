@@ -182,19 +182,6 @@ input {
    transform-origin: center;
 }
 
-.side-right-enter-from, .side-right-leave-to {
-   transform: translateX(150%);
-}
-
-.side-right-enter-to, .side-right-leave-from {
-   transform: translateX(0);
-}
-
-.side-right-enter-active, .side-right-leave-active {
-   transition: all 0.5s ease;
-}
-
-
 @media screen and (max-width: 300px) {
    h1 {
       font-size: 20px;

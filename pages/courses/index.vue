@@ -49,7 +49,7 @@
    }
 
    const statisticsBoxResponsivness = () => {
-      const minWindowWidth = 800;
+      const minWindowWidth = 800; //800 is the default, if it get changed so it need to be done in the css too (max-width: 800px)
       if(window.innerWidth <= minWindowWidth) {
          statisticsIsSidebar.value = true;
       }
@@ -75,13 +75,20 @@
             </ClientOnly>
          </div>
 
-         <Transition name="side-right" appear>
-            <div class="statistics-box" id="statistics-box" v-show="showStatistics">
+         <input class="shadow" id="sidebar-input" type="checkbox" />
+         <label class="sidebar-button-label" for="sidebar-input">
+            <div class="icon-div">
+               <Icon class="arrow-icon" name="material-symbols:arrow-cool-down-rounded" size="30px" color="white"/>
+            </div>
+         </label>
+
+         <div class="sidebar">
+            <UserProfile :maintainText="true"/>
+            <div class="statistics-box" id="statistics-box">
                <DailyConclusions :history="history" />
                <History :history="history" />
             </div>
-         </Transition>
-         <button class="sidebar-button shadow" @click="() => showStatistics = !showStatistics"/>
+         </div>   
       </div>
    </div>
 </template>
