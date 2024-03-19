@@ -40,7 +40,7 @@ history.forEach(hist => {
                   <span class="white-font">{{ day.value }}</span>
                </div>
             </div>
-            <span>{{ day.name }}</span>
+            <span class="day-name">{{ day.name }}</span>
          </div>
       </div>
    </div>
@@ -88,6 +88,26 @@ history.forEach(hist => {
 
    span {
       writing-mode: vertical-rl;
+   }
+}
+
+@media screen and (max-width: 390px) {
+   .bar-outer {
+      width: 30px;
+   }
+
+   .day-name {
+      font-size: 0px;
+   }
+   
+   .day-name::first-letter {
+      font-size: 16px;
+   }
+}
+
+@media screen and (max-width: 330px) {
+   .bar-outer {
+      width: 25px;
    }
 }
 </style>

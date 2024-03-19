@@ -5,21 +5,23 @@
    }
    const id = +data.value.user.email.split("-")[0];
 
-   const statisticsIsSidebar = ref(false);
-   const showStatistics = ref(false);
-
    const { courses } = await $fetch(`/api/courses?id=${encodeURIComponent(id)}`);
    const { history } = await $fetch(`/api/history?userId=${encodeURIComponent(id)}`)
    
+   const columnsForCoursesMatrix = ref([])
+
    const getCoursesMatrix = () => {
       //mansory layout
       const coursesMatrix = [];
 
       let statisticsBoxWidth = 430;
       if(process.client) {
-         if(statisticsIsSidebar) {
-            //the statistics will not occupy any space
-            statisticsBoxWidth = 0;
+         var label = document.getElementById('sidebar-button-label');
+         var style = window.getComputedStyle(label);
+         const display = style.getPropertyValue('display');
+         if(display != 'none') {
+            //the statistics will not occupy any space and will remove the gap
+            statisticsBoxWidth = -30;
          } else {
             statisticsBoxWidth = document.getElementById('statistics-box').offsetWidth;
          }
@@ -28,7 +30,8 @@
       const coursesBoxWidth = process.client ? window.innerWidth - (statisticsBoxWidth + 30 + 2*55) : 870; 
       //size of the client window - (size of the history + gap + page padding)
       
-      const columns = Math.floor(coursesBoxWidth / 290); //coursesBoxWidth divided by course max-width (280) plus gap/2 (20/2)
+      const columns = Math.max(1, Math.floor(coursesBoxWidth / 290)); //coursesBoxWidth divided by course max-width (280) plus gap/2 (20/2)
+      //there must be at least one column...
       const rows = Math.ceil(courses.length / columns); //amount of rows depending on courses and columns amount
    
       for (let col = 0; col < columns; col++) {
@@ -45,17 +48,12 @@
          coursesMatrix.push(actualRows); //push all the rows to the column
       }
 
-      return coursesMatrix;
+      columnsForCoursesMatrix.value = coursesMatrix;
    }
 
-   const statisticsBoxResponsivness = () => {
-      const minWindowWidth = 800; //800 is the default, if it get changed so it need to be done in the css too (max-width: 800px)
-      if(window.innerWidth <= minWindowWidth) {
-         statisticsIsSidebar.value = true;
-      }
-   } 
-
-   process.client ? statisticsBoxResponsivness() : null;
+   if(window?.addEventListener) {
+      addEventListener('resize', getCoursesMatrix, false);
+   }
 </script>
 
 <template>
@@ -68,7 +66,7 @@
             <!-- Client only to avoid hidration mismatch -->
             <ClientOnly>
                <div id="masonry-layout-courses">
-                  <div class="masonry-column" v-for="columns in getCoursesMatrix()">
+                  <div class="masonry-column" v-for="columns in columnsForCoursesMatrix">
                      <Course v-for="course in columns" :course="course"/>
                   </div>
                </div>
@@ -76,13 +74,16 @@
          </div>
 
          <input class="shadow" id="sidebar-input" type="checkbox" />
-         <label class="sidebar-button-label" for="sidebar-input">
+         <label for="sidebar-input" id="sidebar-background-label">
+            <div class="sidebar-background"/>
+         </label>
+         <label id="sidebar-button-label" for="sidebar-input">
             <div class="icon-div">
                <Icon class="arrow-icon" name="material-symbols:arrow-cool-down-rounded" size="30px" color="white"/>
             </div>
          </label>
 
-         <div class="sidebar">
+         <div id="sidebar">
             <UserProfile :maintainText="true"/>
             <div class="statistics-box" id="statistics-box">
                <DailyConclusions :history="history" />

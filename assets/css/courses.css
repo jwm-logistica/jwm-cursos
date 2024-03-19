@@ -17,6 +17,10 @@
    gap: 20px;
 }
 
+#masonry-layout-courses:only-child {
+   gap: 0px;
+}
+
 .masonry-column {
    display: flex;
    flex-direction: column;
@@ -24,18 +28,17 @@
 }
 
 .statistics-box {
-   width: fit-content;
+   width: 100%;
    max-width: 500px;
    display: flex;
    flex-direction: column;
    gap: 30px;
 }
 
-.sidebar-button-label {
+#sidebar-button-label {
    right: 0px;
    position: fixed;
-   display: flex;
-   z-index: 1;
+   z-index: 3;
 }
 
 #sidebar-input {
@@ -57,26 +60,32 @@
    transition: all 0.75s ease;
 }
 
-.sidebar {
-   z-index: 0;
+#sidebar {
+   z-index: 2;
 }
 
-#sidebar-input:checked + .sidebar-button-label > .icon-div > .arrow-icon {
+/* changing the position to the courses page, go to main.css to see all the other styles */
+.sidebar-background {
+   transform: translateX(100%);
+}
+
+#sidebar-input:checked + #sidebar-background-label > .sidebar-background {
+   visibility: visible;
+   transform: translateX(0);
+}
+
+#sidebar-input:checked + label + #sidebar-button-label > .icon-div > .arrow-icon {
    transform: rotate(-90deg);
 }
 
-#sidebar-input:checked + .sidebar-button-label + .sidebar {
+#sidebar-input:checked + label + label + #sidebar {
    visibility: visible;
    transform: translateX(0);
 }
 
 /* mobile styles */
 @media screen and (max-width: 884px) {
-   #masonry-layout-courses {
-      gap: 0px;
-   }
-
-   .sidebar {
+   #sidebar {
       visibility: hidden;
       position: fixed;
       width: 500px;
@@ -88,39 +97,52 @@
       right: 0;
       transform: translateX(100%);
       transition: all 0.5s ease;
-      justify-content: center;
       background-color: white;
       gap: 20px;
+      padding: 30px 40px;
+      overflow-y: auto;
    }
 
-   .sidebar-button-label {
+   #view-body-courses {
+      gap: 0;
+   }
+
+   #sidebar-button-label {
       display: block;
    }
 
-   .sidebar > .user-box {
+   #sidebar > .user-box {
       display: flex;
    }
 }
 
 @media screen and (max-width: 555px) {
-   .sidebar {
+   #sidebar {
       width: 100vw;
-   }
+   } 
+}
 
-   
+@media screen and (max-width: 390px) {
+   #sidebar {
+      padding: 20px 30px;
+   }
 }
 
 /* computer styles */
 @media screen and (min-width: 885px) {
-   .sidebar {
+   #sidebar {
       visibility: visible;
    }
 
-   .sidebar-button-label {
+   #sidebar-button-label {
       display: none;
    }
 
-   .sidebar > .user-box {
+   .sidebar-background {
+      display: none;
+   }
+
+   #sidebar > .user-box {
       display: none;
    }
 }

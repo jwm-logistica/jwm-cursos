@@ -66,9 +66,11 @@ function remapHistory() {
                         {{' - ' + lesson.name }}
                      </span>
                   </div>
-                  <span class="lighter">{{
-                     !lesson.duration ? null : lesson.duration + "min"
-                  }}</span>
+                  <div class="minutes">
+                     <span class="lighter">{{
+                        !lesson.duration ? null : lesson.duration + "min"
+                     }}</span>
+                  </div>
                </div>
             </div>
          </div>
@@ -78,8 +80,6 @@ function remapHistory() {
 
 <style scoped>
 .history-box {
-   max-width: 430px;
-   min-width: 400px;
    width: 100%;
    padding: 25px;
    display: flex;
@@ -96,6 +96,7 @@ function remapHistory() {
    display: flex;
    flex-direction: column;
    gap: 15px;
+   overflow: hidden;
 }
 
 .lessons {
@@ -127,6 +128,7 @@ function remapHistory() {
 }
 
 .lesson-done {
+   position: relative;
    display: flex;
    align-items: flex-end;
    gap: 10px;
@@ -135,6 +137,14 @@ function remapHistory() {
    span {
       display: inline-block;
       line-height: 17px;
+   }
+}
+
+@media screen and (max-width: 484px) {
+   .minutes {
+      position: absolute;
+      right: 0;
+      background-color: white;
    }
 }
 </style>

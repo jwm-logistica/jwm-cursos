@@ -1,10 +1,13 @@
 <script setup>
 import { vueVimeoPlayer } from 'vue-vimeo-player'
+import { useElementVisibility } from '@vueuse/core';
 
 const route = useRoute();
 const router = useRouter();
 const { id } = route.params;
 const userId = route.query.userId;
+
+const isChapterVideoInViewPort = ref(false);
 
 const { data, pending } = await useAsyncData('user-course-chapters', async () => {
    const [ course, chapters, history ] = await Promise.all([
@@ -158,17 +161,12 @@ const lessonSelection = (lessonNumber) => {
    });
 
    if(lessonNumber) {
-      lessonSelected.value = chapterSelected.value.lessons.find(lesson => lesson.number == lessonNumber);
+      const lesson = chapterSelected.value.lessons.find(lesson => lesson.number == lessonNumber);
+      lessonSelected.value = lesson;
    } else {
       //resets the value of the lesson
       lessonSelected.value = defaultSelectedLesson;
    }
-}
-
-const getMaxTitleWidth = () => {
-   const sideBarWidth = process.client ? document.getElementById('side-bar').offsetWidth : 325;
-   //maxTitleWidth is composed from the window width size - (paddings on the page (2*55px) + gap (55px) + side-bar maxwidth)
-   return process.client ? window.innerWidth - (4*55 + sideBarWidth) : 940;
 }
 
 const onVideoProgress = (data) => {
@@ -177,25 +175,48 @@ const onVideoProgress = (data) => {
       updateUserHistory(lessonSelected.value.number, chapterSelected.value.number);
    }
 }
+
+const checkIfElementIsVisible = () => {
+   const chapterVideo = ref(document.getElementById('chapter-video-box'));
+
+   isChapterVideoInViewPort.value = useElementVisibility(chapterVideo).value;
+}
+
+if (window?.addEventListener) {
+   addEventListener('scroll', checkIfElementIsVisible, false);
+   addEventListener('load', checkIfElementIsVisible, false)
+}
 </script>
 
 <template>
    <div id="inner-body-course" class="spaced-body">
       <AppHeader />
 
+      <input class="shadow" id="sidebar-input" type="checkbox" />
+      <label for="sidebar-input" id="sidebar-background-label">
+         <div class="sidebar-background"/>
+      </label>
+      <label id="sidebar-button-label" for="sidebar-input">
+         <div class="icon-div">
+            <Icon class="arrow-icon" name="material-symbols:arrow-cool-down-rounded" size="30px" color="white"/>
+         </div>
+      </label>
+
       <div id="view-body-course">
-         <div class="side-bar" id="side-bar">
-            <div class="back-and-progress">
-               <NuxtLink to="/courses" class="red-font">Voltar</NuxtLink>
-               <ProgressBar :progress="(course.progress / chapters.length) * 100"/>
-               <span class="lighter">{{ course.progress + '/' + chapters.length }}</span>
+         <div id="chapters-sidebar-mobile">
+            <div id="chapters-sidebar">
+               <div class="back-and-progress">
+                  <NuxtLink to="/courses" class="red-font">Voltar</NuxtLink>
+                  <ProgressBar :progress="(course.progress / chapters.length) * 100"/>
+                  <span class="lighter">{{ course.progress + '/' + chapters.length }}</span>
+               </div>
+               <CourseChapter
+                  v-for="chapter in chapters"
+                  :chapter="chapter"
+                  @chapterSelection="number => chapterSelection(number)"
+                  @lessonSelection="number => lessonSelection(number)"
+               />
             </div>
-            <CourseChapter
-               v-for="chapter in chapters"
-               :chapter="chapter"
-               @chapterSelection="number => chapterSelection(number)"
-               @lessonSelection="number => lessonSelection(number)"
-            />
          </div>
 
          <div class="chapter-view">
@@ -203,7 +224,7 @@ const onVideoProgress = (data) => {
                <div>
                   <!-- Client only to avoid hidration mismatch -->
                   <ClientOnly>
-                     <div class="course-chapter-title" :style="'max-width:'+getMaxTitleWidth()+'px'">
+                     <div class="course-chapter-title">
                         <h1 class="red-font" style="white-space: nowrap;">{{ course.name }}</h1>
                         <div class="line" />
                         <h1>{{ chapterSelected.name }}</h1>
@@ -219,7 +240,7 @@ const onVideoProgress = (data) => {
                </ClientOnly>
             </div>
 
-            <div class="chapter-video-box" v-if="lessonSelected.type == 'VIDEO' && lessonSelected.videoUrl != '' ">
+            <div class="chapter-video-box" id="chapter-video-box" v-if="lessonSelected.type == 'VIDEO' && lessonSelected.videoUrl != '' ">
                <h2>{{ lessonSelected.name }}</h2>
                <div class="chapter-video bordered shadow">
                   <vue-vimeo-player ref="player" @progress="onVideoProgress" :video-url="lessonSelected.videoUrl" :options="{responsive: true}"/>
@@ -237,6 +258,10 @@ const onVideoProgress = (data) => {
                :lessonNumber="+lessonSelected.number"
                @nextLesson="nextLesson"
             />
+
+            <div class="notification-arrow-down" v-if="!isChapterVideoInViewPort && lessonSelected.videoUrl">
+               <Icon name="material-symbols:double-arrow" size="50px" color="#e31c24"/>
+            </div>
          </div>
       </div>
    </div>

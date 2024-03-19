@@ -3,7 +3,52 @@
    gap: 55px;
 }
 
-.side-bar {
+#sidebar-button-label {
+   display: none;
+   left: 0px;
+   position: fixed;
+   z-index: 3;
+}
+
+#sidebar-input {
+   display: none;
+}
+
+.icon-div {
+   padding: 10px;
+   display: flex;
+   border-radius: 0px 10px 10px 0px;
+   background-color: red;
+   flex-direction: column;
+   justify-content: space-between;
+   cursor: pointer;
+}
+
+.arrow-icon {
+   transform: rotate(-90deg);
+   transition: all 0.75s ease;
+}
+
+/* changing the position to the course page, go to main.css to see all the other styles */
+.sidebar-background {
+   transform: translateX(-100%);
+}
+
+#sidebar-input:checked + #sidebar-background-label > .sidebar-background {
+   visibility: visible;
+   transform: translateX(0);
+}
+
+#sidebar-input:checked + label + #sidebar-button-label > .icon-div > .arrow-icon {
+   transform: rotate(90deg);
+}
+
+#sidebar-input:checked + label + label + #view-body-course > #chapters-sidebar-mobile {
+   visibility: visible;
+   transform: translateX(0);
+}
+
+#chapters-sidebar {
    max-width: 325px;
    width: fit-content;
    display: flex;
@@ -18,6 +63,7 @@
 }
 
 .course-chapter-title {
+   width: 100%;
    display: inline-block;
    white-space: nowrap;
    overflow: hidden;
@@ -30,9 +76,13 @@
 }
 
 .chapter-view {
+   /* 
+      the size of the chapter is relative to the presence of fixed (mobile) or relative (computer - 325px) sidebar position
+      and the view body gap (55px). Look at the @media for the values for mobile
+   */
    display: flex;
    flex-direction: column;
-   width: 100%;
+   width: calc(100% - (325px + 55px)); 
    padding: 0px 30px 0px 30px;
 }
 
@@ -59,4 +109,86 @@
    width: 100%;
    aspect-ratio: 16/9;
    overflow: hidden;
+   z-index: 0;
+}
+
+@keyframes updown {
+   0% { transform: translate(-50%, 0) rotate(90deg) }
+   50% { transform: translate(-50%, -10px) rotate(90deg) }
+   100% { transform: translate(-50%, 0) rotate(90deg) }
+}
+
+.notification-arrow-down {
+   position: fixed;
+   bottom: 40px;
+   left: 50%;  
+   animation: updown 2s infinite;
+   transition: all 0.5s ease;
+   z-index: 4;
+}
+
+@media screen and (max-width: 1200px) {
+   .chapter-view {
+      padding: 0px 20px;
+   }
+}
+
+@media screen and (max-width: 1024px) {
+   #chapters-sidebar-mobile {
+      visibility: hidden;
+      position: fixed;
+      background-color: white;
+      top: 0;
+      left: 0;
+      transform: translateX(-100%);
+      transition: transform 0.5s ease, visibility 0.5s ease;
+      padding: 40px 30px;
+      overflow: auto;
+      z-index: 2;
+   }
+
+   #view-body-course {
+      gap: 0px;
+   }
+
+   #chapters-sidebar {
+      height: 100vh;
+   }
+
+   #sidebar-button-label {
+      display: block;
+   }
+
+   .chapter-view {
+      width: 100%;
+   }
+}
+
+@media screen and (max-width: 600px) {
+   .chapter-view {
+      padding: 0px 15px;
+   }
+}
+
+@media screen and (max-width: 400px) {
+   #chapters-sidebar-mobile {
+      width: 100%;
+   }
+
+   #chapters-sidebar {
+      width: 100%;
+   }
+}
+
+@media screen and (max-width: 300px) {
+   .chapter-view {
+      padding: 0px;
+   }
+}
+
+/* computer styles */
+@media screen and (min-width: 1025px) {
+   .sidebar-background {
+      display: none;
+   }
 }

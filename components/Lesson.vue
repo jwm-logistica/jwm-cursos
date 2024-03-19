@@ -48,7 +48,7 @@ const selectLesson = () => {
          <CircleWBaseLine :active="active" :completed="completed"/>
          <button class="lesson-button" @click="selectLesson">
             <div class="lesson-name-icon">
-               <span ref="textRef" :class="completed ? 'completed' : ''">{{ lesson.name }}</span>
+               <span ref="textRef" :class="completed ? 'lesson-name completed' : 'lesson-name'">{{ lesson.name }}</span>
                <Icon name="ic:baseline-ondemand-video" size="20px" class="main-icon" v-if="lesson.type == 'VIDEO'"/>
                <Icon name="mdi:file-document-edit-outline" size="20px" class="main-icon" v-if="lesson.type == 'TEST'"/>
             </div>
@@ -110,5 +110,26 @@ label {
 
 .completed {
    text-decoration: line-through #e31c24;
+}
+
+.main-icon {
+   min-width: 20px;
+   min-height: 20px;
+}
+
+@media screen and (max-width: 400px) {
+   .lesson-name {
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
+      overflow: hidden;
+   }
+
+   .lesson-name-icon {
+      max-width: 100%;
+   }
+
+   .lesson-button {
+      max-width: 100%;
+   }
 }
 </style>

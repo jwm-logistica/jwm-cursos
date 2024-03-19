@@ -127,4 +127,10 @@ const handleClick = (number) => {
 .icon-appear-enter-active {
    transition: all 0.5s ease;
 }
+
+@media screen and (max-width: 400px) {
+   .chapter-box {
+      min-width: 0px;
+   }
+}
 </style>
