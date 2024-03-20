@@ -23,7 +23,10 @@
             //the statistics will not occupy any space and will remove the gap
             statisticsBoxWidth = -30;
          } else {
-            statisticsBoxWidth = document.getElementById('statistics-box').offsetWidth;
+            const sidebar = document.getElementById('sidebar');
+            if(sidebar) {
+               statisticsBoxWidth = document.getElementById('sidebar').offsetWidth;
+            }
          }
       }
       
@@ -50,6 +53,8 @@
 
       columnsForCoursesMatrix.value = coursesMatrix;
    }
+
+   getCoursesMatrix(); //first call
 
    if(window?.addEventListener) {
       addEventListener('resize', getCoursesMatrix, false);
