@@ -16,7 +16,7 @@ async function handleSignOut() {
 <template>
     <div class="user-box">
         <div :class="props.maintainText ? 'text-area maintain' : 'text-area'">
-            <h2>{{ data?.user.name }}</h2>
+            <h2>{{ data?.user.name.split("-")[1] }}</h2>
             <h3>Você está fazendo um bom progresso!</h3>
         </div>
         <div class="user-profile">

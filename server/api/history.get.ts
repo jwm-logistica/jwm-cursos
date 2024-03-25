@@ -11,7 +11,7 @@ export default defineEventHandler(async(event) => {
 
     let error = null;
 
-    const history = await prisma.lessonsHistory.findMany({
+    const history = await prisma.lessonshistory.findMany({
         where: {
             userId: userId,
         }, 

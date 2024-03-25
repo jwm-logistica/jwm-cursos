@@ -10,7 +10,7 @@ export default defineEventHandler(async(event) => {
 
     let error = null;
 
-    const res = await prisma.coursesOnUsers.findMany({
+    const res = await prisma.coursesonusers.findMany({
         where: {
             userId: id,
         }, 

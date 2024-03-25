@@ -27,7 +27,7 @@ export default defineEventHandler(async(event) => {
         }
     }
 
-    const res = await prisma.coursesOnUsers.update({
+    const res = await prisma.coursesonusers.update({
         where: {
             courseId_userId: {
                 courseId: body.courseId,

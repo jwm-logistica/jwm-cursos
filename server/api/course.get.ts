@@ -12,7 +12,7 @@ export default defineEventHandler(async(event) => {
 
     let error = null;
 
-    const res = await prisma.coursesOnUsers.findUnique({
+    const res = await prisma.coursesonusers.findUnique({
         where: {
             courseId_userId: {
                 courseId: id,

@@ -11,7 +11,7 @@ export default defineEventHandler(async(event) => {
 
     let error = null;
 
-    const res = await prisma.testsResults.upsert({
+    const res = await prisma.testsresults.upsert({
         where: {
             userId_lessonNumber: {
                 userId: body.userId,

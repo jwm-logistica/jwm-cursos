@@ -18,13 +18,13 @@ interface UserData {
     }
 }
 
-async function GetUser(email: string) {
-    const data = await $fetch('/api/user', { params: { email: email }}) as UserData
+async function GetUser(login: string) {
+    const data = await $fetch('/api/user', { params: { login: login }}) as UserData
     return data.user
 }
 
 interface Credentials {
-    email: string,
+    login: string,
     password: string,
 }
 
@@ -39,8 +39,9 @@ export default NuxtAuthHandler({
         CredentialsProvider.default({
             name: "Credentials",
             async authorize(credentials: Credentials) {
-                try {
-                    const user = await GetUser(credentials?.email);
+                try {  
+                    const l = credentials?.login.replace(/[.-]/g, '') //login without . and/or -
+                    const user = await GetUser(l);
     
                     const correctPassword = await bcrypt.compare(
                         credentials.password,
@@ -49,13 +50,13 @@ export default NuxtAuthHandler({
     
                     if(correctPassword) {
                         return {
-                            name: user.name,
-                            email: user.id + '-' + user.email, //cheese way to get the user id without using local credentials
+                            name: user.id + '-' + user.name, //cheese way to get the user id without using local credentials
                             image: user.imageUrl
                         }
                     }
                 } catch(err) {
                     console.log(err)
+                    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
                 }
             }
         })

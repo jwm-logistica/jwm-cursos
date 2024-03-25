@@ -1,16 +1,10 @@
 <script setup>
 const { signIn } = useAuth();
 
-const email = ref('') 
+const login = ref('') 
 const password = ref('')
 
-const route = useRoute();
-const error = route.query.error;
 const showError = ref(false)
-
-if(error) {
-   showError.value = true;
-}
 
 definePageMeta({
   auth: {
@@ -19,8 +13,21 @@ definePageMeta({
   },
 })
 
-const handleSignIn = (email, password) => {
-   signIn('credentials', {email, password})
+const handleSignIn = async (login, password) => {
+   const {error} = await signIn('credentials', {login, password, redirect: false})
+
+   if(error) {
+      showError.value = true;
+   } else {
+      return navigateTo('/courses', {external: true});
+   }
+}
+
+const formatCPF = () => {
+   login.value = login.value.replace(/\D/g, "");
+   login.value = login.value.replace(/(\d{3})(\d)/, "$1.$2");
+   login.value = login.value.replace(/(\d{3})(\d)/, "$1.$2");
+   login.value = login.value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 </script>
 
@@ -32,18 +39,18 @@ const handleSignIn = (email, password) => {
             <div class="title-box">
                <h1 class="red-font">CURSOS</h1>
                <div class="line" />
-               <h1>LOGIN</h1>
+               <h1>ACESSO</h1>
             </div>
             <h3>Acesse sua área de cursos JWM</h3>
          </div>
 
-         <form @submit.prevent="() => handleSignIn(email, password)">
+         <form @submit.prevent="() => handleSignIn(login, password)">
             <div class="login-input-section">
-               <input v-model="email" placeholder="Email" type="email" name="email" required/>
+               <input v-model="login" placeholder="Login" name="login" required @input="formatCPF" maxlength="14"/>
                <input v-model="password" placeholder="Senha" type="password" name="password" required/>
             </div>
             
-            <button type="submit" class="button-main">LOGIN</button>
+            <button type="submit" class="button-main">ENTRAR</button>
          </form>
       </div>
       <Transition name="fade" appear>

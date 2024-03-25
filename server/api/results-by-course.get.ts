@@ -18,7 +18,7 @@ export default defineEventHandler(async(event) => {
 
     let error = null;
 
-    const res = await prisma.testsResults.findMany({
+    const res = await prisma.testsresults.findMany({
         where: {
             AND: [
                 {

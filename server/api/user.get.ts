@@ -2,13 +2,13 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async(event) => {
-    const email = getQuery(event)?.email as string;
+    const login = getQuery(event)?.login as string;
 
     let error = null;
     
     const user = await prisma.users.findUnique({
         where: {
-          email: email,
+          login: login,
         },
       }).catch(e => {
         error = e;

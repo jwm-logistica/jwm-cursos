@@ -10,32 +10,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model users {
   id    Int     @id @default(autoincrement())
-  email String  @unique
+  login String  @unique
   name  String @db.VarChar(100)
   password String
   imageUrl String?
-  lessonsHistory LessonsHistory[]
-  courses CoursesOnUsers[]
-  testsResults TestsResults[]
+  lessonsHistory lessonshistory[]
+  courses coursesonusers[]
+  testsResults testsresults[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Courses {
+model courses {
   id Int @id @default(autoincrement())
   name String @db.VarChar(100)
   description String @db.Text
   imageUrl String?
-  users CoursesOnUsers[]
-  chapters Chapters[]
+  users coursesonusers[]
+  chapters chapters[]
 }
 
-model CoursesOnUsers {
-  courses Courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model coursesonusers {
+  courses courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int
-  users Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  users users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
   progress Int
   average Int @default(0)
@@ -45,21 +45,21 @@ model CoursesOnUsers {
   @@unique([courseId, userId])
 }
 
-model Chapters {
+model chapters {
   number Int @id @unique @default(autoincrement())
   name String @db.VarChar(100)
   title String
   description String? @db.MediumText
-  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  course courses @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int
-  lessons Lessons[]
+  lessons lessons[]
 }
 
-model LessonsHistory {
+model lessonshistory {
   completed Boolean @default(false)
-  user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
-  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
+  lesson lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
   updatedAt DateTime @updatedAt
 
@@ -67,17 +67,17 @@ model LessonsHistory {
   @@unique([userId, lessonNumber])
 }
 
-model Lessons {
+model lessons {
   number Int @id @unique @default(autoincrement())
   name String @db.VarChar(100)
   type LessonType @default(VIDEO)
   durationMinutes Int?
   videoUrl String?
-  chapter Chapters @relation(fields: [chapterNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
+  chapter chapters @relation(fields: [chapterNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   chapterNumber Int
-  questions Questions[]
-  lessonsHistory LessonsHistory[]
-  testsResults TestsResults[]
+  questions questions[]
+  lessonsHistory lessonshistory[]
+  testsResults testsresults[]
 }
 
 enum LessonType {
@@ -85,27 +85,27 @@ enum LessonType {
   TEST
 }
 
-model Questions { 
+model questions { 
   number Int @id @unique @default(autoincrement())
   text String @db.MediumText
-  alternatives Alternatives []
-  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
+  alternatives alternatives []
+  lesson lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
 }
 
-model Alternatives {
+model alternatives {
   number Int @id @unique @default(autoincrement())
   text String @db.Text
   correctAnswer Boolean
-  question Questions @relation(fields: [questionNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
+  question questions @relation(fields: [questionNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   questionNumber Int
 }
 
-model TestsResults {
+model testsresults {
   correctAnswers Int
-  user Users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int
-  lesson Lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
+  lesson lessons @relation(fields: [lessonNumber], references: [number], onDelete: Cascade, onUpdate: Cascade)
   lessonNumber Int
 
   @@id([userId, lessonNumber])
